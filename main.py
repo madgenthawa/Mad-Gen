@@ -6,8 +6,8 @@ import requests
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=API_KEY)
-    # Model name updated to the most stable version
-    model = genai.GenerativeModel('gemini-pro') 
+    # Full model path use panroam compatibility-kkaga
+    model = genai.GenerativeModel('models/gemini-1.5-flash') 
 except Exception as e:
     st.error(f"Maddy, API Key issue: {e}")
 
@@ -26,7 +26,7 @@ st.title("🔥 Mad Gen: Pro Edition")
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    user_input = st.text_area("Enna creative venum?", placeholder="Eg: Pongal Holiday poster...")
+    user_input = st.text_area("Enna creative venum?", placeholder="Eg: LIC Housing Loan ads...")
     style_type = st.select_slider("Quality Style:", options=["Minimalist", "High-End Professional", "Cinematic 8K", "Hyper-Realistic"])
     
     if st.button("Mad Gen, Magic Pannu! ✨"):
@@ -34,15 +34,17 @@ with col1:
             with st.spinner("Mad Gen is thinking..."):
                 try:
                     prompt = f"Create a short catchy Tamil marketing tagline and 3 hashtags for: {user_input}"
+                    # Simple generation request
                     response = model.generate_content(prompt)
                     
                     if response.text:
                         st.session_state['ai_text'] = response.text
-                        # High quality Image logic
+                        # Image generation URL
                         st.session_state['img_url'] = f"https://pollinations.ai/p/{user_input.replace(' ', '%20')}?width=1080&height=1080&seed=123&model=flux"
                         st.session_state['generated'] = True
                 except Exception as ai_err:
-                    st.error(f"Maddy, AI kitta pesum bodhu error: {ai_err}")
+                    # Inga error vandha model name-ai 'gemini-1.0-pro' nu maathi paakalam
+                    st.error(f"Maddy, API side-la chinna issue: {ai_err}")
         else:
             st.warning("Input kudunga Maddy!")
 
@@ -56,7 +58,7 @@ with col2:
             img_data = requests.get(st.session_state['img_url']).content
             st.download_button(label="📥 Download Image", data=img_data, file_name="mad_gen_poster.png", mime="image/png")
         except:
-            st.write("Image-ai save panna long press pannunga!")
+            st.write("Right click panni save pannunga!")
 
 st.divider()
-st.caption("Mad Gen AI | Stability Update ✅")
+st.caption("Mad Gen AI | Compatibility Fix Applied ✅")
