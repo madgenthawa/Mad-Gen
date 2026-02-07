@@ -6,10 +6,10 @@ import requests
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=API_KEY)
-    # Model-ai FLASH-ku mathiyachu for speed
-    model = genai.GenerativeModel('gemini-1.5-flash') 
+    # Model-ai GEMINI-PRO-ku mathiyachu for maximum compatibility
+    model = genai.GenerativeModel('gemini-pro') 
 except Exception as e:
-    st.error(f"Maddy, API Key-la edho issue: {e}")
+    st.error(f"Maddy, API Key-la issue: {e}")
 
 # --- APP CONFIG ---
 st.set_page_config(page_title="Mad Gen AI", page_icon="🎨", layout="wide")
@@ -33,25 +33,17 @@ with col1:
         if user_input:
             with st.spinner("Mad Gen is thinking..."):
                 try:
-                    # SAFETY SETTINGS: Block pannama irukka indha logic mukkiyam
-                    safety_settings = [
-                        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-                    ]
-                    
+                    # Input-ai AI-ku simple-ah anupuroam
                     prompt = f"Create a short catchy Tamil marketing tagline and 3 hashtags for: {user_input}"
-                    # Content generation with safety disabled
-                    response = model.generate_content(prompt, safety_settings=safety_settings)
+                    response = model.generate_content(prompt)
                     
                     if response.text:
                         st.session_state['ai_text'] = response.text
-                        # High quality Image Generation using Pollinations
-                        st.session_state['img_url'] = f"https://pollinations.ai/p/{user_input.replace(' ', '%20')}?width=1080&height=1080&seed=99&model=flux"
+                        # High quality Image logic
+                        st.session_state['img_url'] = f"https://pollinations.ai/p/{user_input.replace(' ', '%20')}?width=1080&height=1080&seed=123&model=flux"
                         st.session_state['generated'] = True
                 except Exception as ai_err:
-                    st.error(f"Error: {ai_err}. Maddy, API Key correct-ah irukkannu oru thadava check pannunga!")
+                    st.error(f"Maddy, API Key-ai oru thadava refresh panni secrets-la podunga. Error: {ai_err}")
         else:
             st.warning("Input kudunga Maddy!")
 
@@ -69,4 +61,4 @@ with col2:
             st.write("Image-ai long press panni save pannunga!")
 
 st.divider()
-st.caption("Mad Gen AI | Safety Blocks Disabled ✅")
+st.caption("Mad Gen AI | Model Updated to Gemini-Pro ✅")
