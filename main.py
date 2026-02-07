@@ -6,7 +6,7 @@ import requests
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=API_KEY)
-    # Model-ai FLASH-ku mathiyachu for better stability
+    # Model-ai FLASH-ku mathiyachu for speed
     model = genai.GenerativeModel('gemini-1.5-flash') 
 except Exception as e:
     st.error(f"Maddy, API Key-la edho issue: {e}")
@@ -26,23 +26,32 @@ st.title("🔥 Mad Gen: Pro Edition")
 col1, col2 = st.columns([1, 1])
 
 with col1:
-    user_input = st.text_area("Enna creative venum?", placeholder="Eg: Festive offer poster for LIC...")
+    user_input = st.text_area("Enna creative venum?", placeholder="Eg: Pongal Holiday poster...")
     style_type = st.select_slider("Quality Style:", options=["Minimalist", "High-End Professional", "Cinematic 8K", "Hyper-Realistic"])
     
     if st.button("Mad Gen, Magic Pannu! ✨"):
         if user_input:
-            with st.spinner("AI is thinking..."):
+            with st.spinner("Mad Gen is thinking..."):
                 try:
-                    # Input-ai konjam clean panni anupuroam
-                    prompt = f"Create a catchy Tamil marketing tagline and 3 hashtags for: {user_input}"
-                    response = model.generate_content(prompt)
+                    # SAFETY SETTINGS: Block pannama irukka indha logic mukkiyam
+                    safety_settings = [
+                        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+                    ]
+                    
+                    prompt = f"Create a short catchy Tamil marketing tagline and 3 hashtags for: {user_input}"
+                    # Content generation with safety disabled
+                    response = model.generate_content(prompt, safety_settings=safety_settings)
                     
                     if response.text:
                         st.session_state['ai_text'] = response.text
-                        st.session_state['img_url'] = f"https://pollinations.ai/p/{user_input.replace(' ', '%20')}?width=1080&height=1080&seed=42&model=flux"
+                        # High quality Image Generation using Pollinations
+                        st.session_state['img_url'] = f"https://pollinations.ai/p/{user_input.replace(' ', '%20')}?width=1080&height=1080&seed=99&model=flux"
                         st.session_state['generated'] = True
                 except Exception as ai_err:
-                    st.error("Maddy, AI response kudukka mudiyala. Oru 10 seconds wait panni thirumba try pannunga!")
+                    st.error(f"Error: {ai_err}. Maddy, API Key correct-ah irukkannu oru thadava check pannunga!")
         else:
             st.warning("Input kudunga Maddy!")
 
@@ -57,7 +66,7 @@ with col2:
             img_data = requests.get(st.session_state['img_url']).content
             st.download_button(label="📥 Download Image", data=img_data, file_name="mad_gen_poster.png", mime="image/png")
         except:
-            st.write("Right click panni image-ai save pannunga!")
+            st.write("Image-ai long press panni save pannunga!")
 
 st.divider()
-st.caption("Mad Gen AI | Error Fixed ✅")
+st.caption("Mad Gen AI | Safety Blocks Disabled ✅")
