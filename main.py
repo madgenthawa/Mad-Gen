@@ -6,8 +6,8 @@ import requests
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=API_KEY)
-    # Latest Stable Model version use panroam
-    model = genai.GenerativeModel('gemini-1.5-flash-latest') 
+    # Model name updated to the most stable version
+    model = genai.GenerativeModel('gemini-pro') 
 except Exception as e:
     st.error(f"Maddy, API Key issue: {e}")
 
@@ -38,10 +38,11 @@ with col1:
                     
                     if response.text:
                         st.session_state['ai_text'] = response.text
+                        # High quality Image logic
                         st.session_state['img_url'] = f"https://pollinations.ai/p/{user_input.replace(' ', '%20')}?width=1080&height=1080&seed=123&model=flux"
                         st.session_state['generated'] = True
                 except Exception as ai_err:
-                    st.error(f"Error: {ai_err}")
+                    st.error(f"Maddy, AI kitta pesum bodhu error: {ai_err}")
         else:
             st.warning("Input kudunga Maddy!")
 
@@ -58,4 +59,4 @@ with col2:
             st.write("Image-ai save panna long press pannunga!")
 
 st.divider()
-st.caption("Mad Gen AI | Model Version Updated ✅")
+st.caption("Mad Gen AI | Stability Update ✅")
