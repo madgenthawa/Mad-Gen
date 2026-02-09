@@ -4,6 +4,7 @@ import time
 # --- APP CONFIG ---
 st.set_page_config(page_title="Mad Gen Pro: Ultra Speed", page_icon="🚀", layout="wide")
 
+# Mass CSS with Logo Styling
 st.markdown("""
 <style>
     .stApp { background: #0e1117; color: white; }
@@ -15,11 +16,15 @@ st.markdown("""
         background-color: #28a745; color: white; padding: 12px 24px; 
         border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-block;
     }
+    .logo-text {
+        font-size: 40px; font-weight: bold; color: #FF4B2B; text-align: center; margin-bottom: 0px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🚀 MAD GEN PRO: INSTANT ENGINE")
-st.write("Maddy, syntax error fix panniyaachu! Ippo unga creative ideas ready aagum.")
+# --- HEADER SECTION ---
+st.markdown('<p class="logo-text">🔥 MAD GEN PRO</p>', unsafe_allow_html=True)
+st.write("<p style='text-align:center;'>Maddy's Instant Creative Engine</p>", unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 1])
 
@@ -31,7 +36,7 @@ with col1:
         if user_input:
             with st.spinner("Mad Gen is summoning your image..."):
                 seed = int(time.time())
-                # Using the direct URL method to bypass server timeouts
+                # Direct URL method to avoid timeouts
                 img_url = f"https://image.pollinations.ai/prompt/{user_input.replace(' ', '%20')}?width=1024&height=1024&seed={seed}&nologo=true"
                 
                 st.session_state['img_url'] = img_url
@@ -45,6 +50,15 @@ with col2:
         # Direct URL display bypasses PIL and timeout errors
         st.image(st.session_state['img_url'], use_container_width=True)
         
-        # Fixed the syntax error in the download section
+        # COMPLETE & FIXED DOWNLOAD SECTION
         st.markdown(f"""
-            <div style="text-align: center; margin-top: 20px
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: #bbb;">Maddy, click below to save in Original High Quality:</p>
+                <a href="{st.session_state['img_url']}" target="_blank" class="download-btn">
+                   📥 DOWNLOAD FULL IMAGE
+                </a>
+            </div>
+        """, unsafe_allow_html=True)
+
+st.divider()
+st.caption("Mad Gen AI | Branding & Syntax Fixed ✅")
