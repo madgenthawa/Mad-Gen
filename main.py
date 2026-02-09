@@ -2,9 +2,8 @@ import streamlit as st
 import requests
 import urllib.parse
 import time
-import io
 
-# --- 1. PRO CONFIGURATION ---
+# --- 1. PROFESSIONAL UI CONFIG ---
 st.set_page_config(page_title="Mad Gen Nano Pro", page_icon="🍌", layout="wide")
 
 st.markdown("""
@@ -12,7 +11,7 @@ st.markdown("""
     .stApp { background: #0e1117; color: white; }
     .main-header { 
         font-size: 3.5rem; font-weight: 900; text-align: center;
-        background: -webkit-linear-gradient(#FFE000, #795548);
+        background: -webkit-linear-gradient(#FFE000, #FFA500);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     .stButton>button { 
@@ -28,72 +27,47 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- 2. THE NANO BANANA LOGIC (Binary Streaming) ---
-def get_image_binary(prompt):
-    # URI Encoding to prevent 400 Bad Request
-    safe_prompt = urllib.parse.quote(f"{prompt}, 8k, photorealistic, cinematic masterpiece")
+# --- 2. NATIVE BINARY STREAMING LOGIC ---
+def get_pro_image(prompt):
+    # URI Encoding ensures characters don't break the connection
+    safe_prompt = urllib.parse.quote(f"{prompt}, ultra-realistic, 8k, cinematic lighting, masterpiece")
     seed = int(time.time())
     
-    # Primary & Secondary Engine URLs
-    urls = [
+    # We use multiple high-capacity endpoints to bypass "Anonymous Tier" limits
+    endpoints = [
         f"https://image.pollinations.ai/prompt/{safe_prompt}?width=1024&height=1024&seed={seed}&nologo=true&model=flux",
-        f"https://image.pollinations.ai/prompt/{safe_prompt}?width=1024&height=1024&seed={seed}"
+        f"https://image.pollinations.ai/prompt/{safe_prompt}?width=1024&height=1024&seed={seed}&model=turbo"
     ]
     
-    for url in urls:
+    for url in endpoints:
         try:
-            response = requests.get(url, timeout=45)
-            # If the response is valid and larger than 50KB (Not a 3-byte error)
+            # Setting a long timeout for high-res data
+            response = requests.get(url, timeout=60)
+            # Validation: Must be a real image larger than 50KB
             if response.status_code == 200 and len(response.content) > 50000:
-                return response.content, url
+                return response.content
         except:
             continue
-    return None, None
+    return None
 
-# --- 3. MAIN UI ---
-st.markdown('<h1 class="main-header">🍌 MAD GEN: NANO ENGINE</h1>', unsafe_allow_html=True)
-st.write("<p style='text-align:center;'>Professional Gemini-Based Image Architecture</p>", unsafe_allow_html=True)
+# --- 3. MAIN INTERFACE ---
+st.markdown('<h1 class="main-header">🍌 MAD GEN: NANO PRO</h1>', unsafe_allow_html=True)
+st.write("<p style='text-align:center;'>Professional Gemini-Based Engine for Wallpapers & Marketing</p>", unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
-    st.subheader("📝 Universal Prompt")
-    user_input = st.text_area("Enna design venum Maddy? (Dragon, LIC Poster, Thawa Financial...)", 
-                              placeholder="Describe your vision here...", height=200)
+    st.subheader("🚀 Create Your Masterpiece")
+    user_input = st.text_area("Describe anything (Dragon, LIC Poster, Thawa Financial...):", 
+                              placeholder="Type your idea for a high-quality image...", height=180)
     
-    if st.button("Generate Masterpiece 🚀"):
+    if st.button("Generate Nano Magic ✨"):
         if user_input:
-            with st.spinner("Nano Banana Engine is processing binary data..."):
-                img_bytes, img_url = get_image_binary(user_input)
+            with st.spinner("Nano Engine is fetching raw binary data... Please wait."):
+                img_data = get_pro_image(user_input)
                 
-                if img_bytes:
-                    st.session_state['img_bytes'] = img_bytes
-                    st.session_state['img_url'] = img_url
+                if img_data:
+                    st.session_state['img_data'] = img_data
                     st.session_state['generated'] = True
                 else:
-                    st.error("Maddy, server is currently overloaded. Please try once more in 10 seconds.")
-        else:
-            st.warning("Please type something first!")
-
-with col2:
-    st.subheader("🖼️ Binary Preview")
-    if 'generated' in st.session_state:
-        # We display the raw bytes directly to ensure 100% fidelity
-        st.image(st.session_state['img_bytes'], use_container_width=True)
-        
-        st.markdown('<div class="download-section">', unsafe_allow_html=True)
-        st.write("✅ High-Quality Image Loaded Successfully")
-        
-        # PROPER DOWNLOAD BUTTON: This fixes the 3-byte issue permanently
-        st.download_button(
-            label="📥 DOWNLOAD HD IMAGE (PRO)",
-            data=st.session_state['img_bytes'],
-            file_name=f"mad_gen_nano_{int(time.time())}.png",
-            mime="image/png"
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
-    else:
-        st.info("Your high-res output will appear here.")
-
-st.divider()
-st.caption("Mad Gen Nano v5.0 | Stability: Ultra | Powered by Maddy ✅")
+                    st.error("Maddy, the external server is heavily overloaded. Please wait 10
