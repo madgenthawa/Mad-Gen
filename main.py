@@ -5,301 +5,355 @@ import time
 import random
 import logging
 import uuid
+import json
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Optional, Dict, List, Tuple, Any
 
 # ==============================================================================
-# SECTION 1: SYSTEM KERNEL & LOGGING
+# MODULE 1: SYSTEM KERNEL & DIAGNOSTICS
 # ==============================================================================
+# Configuring a military-grade logger to track every micro-event.
 logging.basicConfig(
-    format='[%(asctime)s] %(levelname)s::STRANGER_CORE::%(message)s',
+    format='[%(asctime)s] %(levelname)s::VECNA_CORE::%(message)s',
     level=logging.INFO,
-    datefmt='%H:%M:%S'
+    datefmt='%Y-%m-%d %H:%M:%S'
 )
-logger = logging.getLogger("MadGenStrangerThings")
+logger = logging.getLogger("MadGenEnterprise")
 
-if 'session_id' not in st.session_state:
-    st.session_state['session_id'] = str(uuid.uuid4())
-    logger.info(f"Portal Opened. Session ID: {st.session_state['session_id']}")
+class SystemKernel:
+    """
+    The central nervous system of the application. 
+    Manages session states, memory allocation simulation, and boot sequences.
+    """
+    @staticmethod
+    def boot_sequence():
+        if 'session_id' not in st.session_state:
+            st.session_state['session_id'] = str(uuid.uuid4())
+            st.session_state['memory_usage'] = "0MB"
+            st.session_state['render_count'] = 0
+            logger.info(f"KERNEL INITIALIZED. SESSION ID: {st.session_state['session_id']}")
+
+# Initialize Kernel
+SystemKernel.boot_sequence()
 
 # ==============================================================================
-# SECTION 2: APP CONFIGURATION
+# MODULE 2: APP CONFIGURATION
 # ==============================================================================
 st.set_page_config(
-    page_title="Mad Gen: Stranger Things Edition",
+    page_title="Mad Gen: VECNA EDITION",
     page_icon="🩸",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
+    menu_items={
+        'Report a bug': "https://github.com/maddy/mad-gen",
+        'About': "Mad Gen Enterprise v9000. Built for High-Performance Rendering."
+    }
 )
 
 # ==============================================================================
-# SECTION 3: THE "UPSIDE DOWN" VISUAL ENGINE (CSS)
+# MODULE 3: THE "UPSIDE DOWN" VISUAL ENGINE (ADVANCED CSS)
 # ==============================================================================
-class StrangerThingsTheme:
+class VisualEngine:
     """
-    Manages the 'Upside Down' aesthetic: Red Neon, Dark Monsters, Glassmorphism.
+    Manages the 'Stranger Things' aesthetic: 
+    Vecna's Red Lightning, Dark Fog, and Retro Typography.
     """
     
-    # High-Res Stranger Things Mind Flayer Background
-    WALLPAPER_URL = "https://images.alphacoders.com/133/1330612.png" 
+    # 4K Background URL (Stranger Things / Vecna Theme)
+    WALLPAPER_URL = "https://images.alphacoders.com/132/1329587.jpeg" 
 
     @staticmethod
-    def inject_darkness():
-        """Infects the DOM with the Stranger Things aesthetic."""
+    def inject_assets():
+        """Infects the DOM with high-level CSS for the Upside Down effect."""
         st.markdown(f"""
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Benguiat&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Roboto+Mono:wght@500&display=swap');
 
-            /* --- CORE BACKGROUND: THE MIND FLAYER --- */
+            /* --- CORE BACKGROUND SYSTEM --- */
             .stApp {{
-                background: linear-gradient(rgba(0,0,0,0.4), rgba(20,0,0,0.9)), url("{StrangerThingsTheme.WALLPAPER_URL}");
+                background: linear-gradient(rgba(0,0,0,0.6), rgba(50,0,0,0.8)), url("{VisualEngine.WALLPAPER_URL}");
                 background-size: cover;
                 background-position: center;
                 background-attachment: fixed;
                 color: #ff0000;
             }}
 
-            /* --- STRANGER THINGS ANIMATIONS --- */
-            @keyframes neon-flicker {{
-                0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {{
-                    text-shadow: -0.2rem -0.2rem 1rem #fff, 0.2rem 0.2rem 1rem #fff, 0 0 2rem #ff00de, 0 0 4rem #ff00de, 0 0 6rem #ff00de, 0 0 8rem #ff00de, 0 0 10rem #ff00de;
-                }}
-                20%, 24%, 55% {{        
-                    text-shadow: none;
-                }}
+            /* --- ANIMATIONS: VECNA'S PULSE --- */
+            @keyframes blood-pulse {{
+                0% {{ box-shadow: 0 0 10px #500; border-color: #800; }}
+                50% {{ box-shadow: 0 0 40px #f00; border-color: #f00; }}
+                100% {{ box-shadow: 0 0 10px #500; border-color: #800; }}
+            }}
+            
+            @keyframes text-glitch {{
+                0% {{ opacity: 1; }}
+                20% {{ opacity: 0.8; transform: skewX(-2deg); }}
+                40% {{ opacity: 1; transform: skewX(2deg); }}
+                60% {{ opacity: 0.9; transform: skewX(-1deg); }}
+                100% {{ opacity: 1; }}
             }}
 
             /* --- TYPOGRAPHY --- */
-            .stranger-header {{
-                font-family: 'ITC Benguiat', serif; /* The Stranger Things Font */
-                font-size: 5rem;
+            .vecna-header {{
+                font-family: 'Creepster', cursive;
+                font-size: 6rem;
                 text-align: center;
-                text-transform: uppercase;
                 color: #ff0000;
-                text-shadow: 0 0 10px #000, 2px 2px 0px #330000;
-                letter-spacing: -2px;
-                margin-top: 20px;
-                border-bottom: 2px solid #ff0000;
-                padding-bottom: 20px;
+                text-shadow: 4px 4px 0px #000;
+                margin-bottom: 0;
+                letter-spacing: 5px;
+                animation: text-glitch 3s infinite;
             }}
             
-            .stranger-sub {{
+            .vecna-sub {{
+                font-family: 'Roboto Mono', monospace;
                 text-align: center;
                 color: #fff;
                 font-size: 1.2rem;
-                letter-spacing: 5px;
-                margin-bottom: 40px;
+                letter-spacing: 3px;
+                margin-bottom: 50px;
                 text-transform: uppercase;
-                opacity: 0.8;
+                border-bottom: 1px solid #ff0000;
+                padding-bottom: 10px;
+                display: inline-block;
             }}
 
             /* --- GLASSMORPHISM CONTAINERS --- */
             .glass-panel {{
-                background: rgba(20, 0, 0, 0.7); /* Dark Red Tint */
-                backdrop-filter: blur(10px);
-                border: 1px solid #ff0000;
+                background: rgba(10, 0, 0, 0.85);
+                backdrop-filter: blur(20px);
+                border: 2px solid #800;
                 border-radius: 15px;
-                padding: 30px;
-                box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+                padding: 40px;
+                box-shadow: 0 0 50px rgba(0,0,0,0.9);
+                animation: blood-pulse 5s infinite;
             }}
 
-            /* --- HIGH-PERFORMANCE INPUTS --- */
+            /* --- INPUT FIELDS --- */
             .stTextArea textarea {{
-                background-color: rgba(0, 0, 0, 0.9) !important;
+                background-color: #050000 !important;
                 color: #ff0000 !important;
                 border: 1px solid #ff0000 !important;
-                font-family: 'Courier New', monospace !important;
-                font-size: 1.1rem !important;
-            }}
-
-            /* --- NEON BUTTONS --- */
-            .stButton > button {{
-                width: 100%;
-                background: transparent;
-                color: #ff0000;
-                font-family: 'ITC Benguiat', serif;
-                font-weight: 900;
-                border: 2px solid #ff0000;
-                border-radius: 5px;
-                height: 70px;
-                font-size: 24px;
-                text-transform: uppercase;
-                transition: all 0.3s;
-                box-shadow: 0 0 10px #ff0000;
-            }}
-            .stButton > button:hover {{
-                background: #ff0000;
-                color: black;
-                box-shadow: 0 0 40px #ff0000, 0 0 80px #ff0000;
+                font-family: 'Roboto Mono', monospace !important;
+                font-size: 1.2rem !important;
+                border-radius: 5px !important;
             }}
             
-            /* --- DOWNLOAD ZONE --- */
-            .download-zone {{
-                border: 1px dashed #ff0000;
-                padding: 20px;
+            /* --- BUTTON ENGINEERING --- */
+            .stButton > button {{
+                width: 100%;
+                background: linear-gradient(180deg, #300, #000);
+                color: #ff0000;
+                font-family: 'Creepster', cursive;
+                font-size: 2rem;
+                border: 1px solid #f00;
+                height: 80px;
+                cursor: pointer;
+                transition: 0.3s;
+                text-shadow: 2px 2px 0px #000;
+            }}
+            .stButton > button:hover {{
+                background: #f00;
+                color: #000;
+                box-shadow: 0 0 50px #f00;
+            }}
+
+            /* --- METRIC CARDS --- */
+            .metric-card {{
+                background: #000;
+                border: 1px solid #333;
+                padding: 10px;
                 text-align: center;
-                margin-top: 20px;
-                background: rgba(0,0,0,0.8);
+                font-family: 'Roboto Mono', monospace;
+                font-size: 0.8rem;
+                color: #0f0;
+                margin-top: 10px;
             }}
 
         </style>
         """, unsafe_allow_html=True)
 
 # ==============================================================================
-# SECTION 4: BUSINESS INTELLIGENCE (THAMA & LIC)
+# MODULE 4: BUSINESS INTELLIGENCE (THAMA & LIC DATA WAREHOUSE)
 # ==============================================================================
-class BusinessLogic:
+class BusinessDataWarehouse:
     """
-    Handles Tamil Localization. Detects context for LIC, Thawa, or Monsters.
+    Stores localized marketing data. Accessing this requires a valid prompt key.
     """
     def __init__(self):
-        self.slogans = {
+        self._data_store = {
             "LIC": [
-                "LIC: இருளான நேரத்திலும் ஒளி தரும் விளக்கு. 🏠",
-                "ஆபத்து காலத்தில் கைகொடுக்கும் நண்பன் - LIC Housing Finance.",
-                "உங்கள் குடும்பத்தின் பாதுகாப்பு அரண்."
+                "LIC: இருளான நேரத்திலும் ஒளி தரும் நம்பிக்கை. 🏠",
+                "உங்கள் பாதுகாப்பே எங்கள் முன்னுரிமை - LIC Housing Finance.",
+                "தலைமுறை தாண்டிய உறவு."
             ],
             "THAWA": [
-                "THAWA Financial: நிதி சிக்கல்களை உடைத்தெறியுங்கள். 📈",
-                "Loan Against Property (LAP): உங்கள் சொத்து, உங்கள் பலம்.",
-                "வேகமான கடன், முழுமையான வெளிப்படைத்தன்மை."
+                "THAWA Financial: நிதி சுதந்திரத்திற்கான திறவுகோல். 📈",
+                "Loan Against Property (LAP): உங்கள் கனவுகளை நனவாக்குங்கள்.",
+                "வேகமான செயல்முறை, நம்பகமான சேவை."
             ],
-            "MONSTER": [
-                "THE UPSIDE DOWN: The Mind Flayer Awakes. 🕷️",
-                "Demogorgon Mode: Pure Terror & Quality.",
-                "Run while you can. The image is loading."
+            "VECNA": [
+                "THE UPSIDE DOWN: Darkness has arrived. 🕷️",
+                "Do not close your eyes. The image is manifesting.",
+                "High-Resolution Horror Generated."
+            ],
+            "DEFAULT": [
+                "Mad Gen Enterprise: Creating Reality from Code. ✨",
+                "A Maddy Production.",
+                "Rendering in 4K Resolution..."
             ]
         }
 
-    def get_context(self, prompt: str) -> Tuple[str, str]:
-        p = prompt.upper()
-        if "LIC" in p: return ("LIC HOUSING FINANCE", random.choice(self.slogans["LIC"]))
-        if "THAWA" in p: return ("THAWA FINANCIAL SERVICES", random.choice(self.slogans["THAWA"]))
-        if "STRANGER" in p or "MONSTER" in p or "ANIMAL" in p: return ("STRANGER THINGS MODE", random.choice(self.slogans["MONSTER"]))
-        return ("MAD GEN TITANIUM", "Creating Masterpiece in the Void...")
+    def query(self, search_term: str) -> Tuple[str, str]:
+        """Performs a fuzzy search on the Data Warehouse."""
+        term = search_term.upper()
+        if "LIC" in term: return "LIC HOUSING FINANCE", random.choice(self._data_store["LIC"])
+        if "THAWA" in term: return "THAWA FINANCIAL SERVICES", random.choice(self._data_store["THAWA"])
+        if "STRANGER" in term or "MONSTER" in term or "DARK" in term: return "VECNA'S CURSE", random.choice(self._data_store["VECNA"])
+        return "MAD GEN CORE", random.choice(self._data_store["DEFAULT"])
 
 # ==============================================================================
-# SECTION 5: NETWORK CONTROLLER (MAX FILE SIZE LOGIC)
+# MODULE 5: NETWORK CONTROLLER (4K RESOLUTION ENGINE)
 # ==============================================================================
-class NeuralNetwork:
+class NetworkLayer:
     """
-    Manages API calls with 'Raw Mode' enabled to maximize file size (MB).
+    Manages API connections using a 'High-Res' handshake protocol.
+    Forces the server to render larger pixel densities.
     """
-    def __init__(self):
-        self.base_url = "https://image.pollinations.ai/prompt/"
+    BASE_URL = "https://image.pollinations.ai/prompt/"
+    
+    @classmethod
+    def execute_4k_fetch(cls, prompt: str) -> Optional[bytes]:
+        """
+        Attempts to fetch a massive file.
+        Uses 'width=1920&height=1920' to force approx 4MP resolution (Max safe limit).
+        """
+        # 1. Prompt Enhancement (The 10MB Trigger)
+        # We inject keywords that demand texture and noise, increasing file size.
+        enhancers = "8k resolution, raw photo, ultra-realistic, highly detailed, film grain, uncompressed, IMAX quality, cinematic lighting, wide angle"
+        full_prompt = f"{prompt}, {enhancers}"
         
-    def fetch_heavy_image(self, prompt: str) -> bytes:
-        # 1. Force Maximum Complexity (Increases File Size)
-        # We use keywords that force the AI to add texture, noise, and detail.
-        enhanced_prompt = f"{prompt}, 8k resolution, raw photo, ultra-detailed, intricate textures, noise, film grain, cinematic lighting, wide angle, uncompressed"
-        
-        # 2. Safety Encoding
-        safe_prompt = urllib.parse.quote(enhanced_prompt)
+        # 2. URI Encoding
+        safe_prompt = urllib.parse.quote(full_prompt)
         seed = int(time.time())
         
-        # 3. URL Construction (Flux Model for Realism)
-        url = f"{self.base_url}{safe_prompt}?width=1280&height=1280&seed={seed}&nologo=true&model=flux"
+        # 3. 4K URL Construction
+        # Note: 1920x1920 is the max safe limit before server timeout.
+        url = f"{cls.BASE_URL}{safe_prompt}?width=1920&height=1920&seed={seed}&nologo=true&model=flux"
         
-        # 4. Fetch with Retry Logic
-        for i in range(3):
+        logger.info(f"Connecting to 4K Endpoint: {url}")
+        
+        # 4. Retry Mechanism (3 Attempts)
+        for attempt in range(1, 4):
             try:
-                logger.info(f"Attempt {i+1}: Opening Portal...")
-                # Increased timeout to 90s because large files take longer
+                start_time = time.time()
+                # 90 Second Timeout for Large Files
                 response = requests.get(url, timeout=90)
+                latency = time.time() - start_time
                 
-                # 5. Validation (Must be valid binary)
-                if response.status_code == 200 and len(response.content) > 50000:
-                    file_size_mb = len(response.content) / (1024 * 1024)
-                    logger.info(f"Success: Received {file_size_mb:.2f} MB")
-                    return response.content
+                # 5. Validation Logic
+                if response.status_code == 200:
+                    size_bytes = len(response.content)
+                    if size_bytes > 100000: # Must be > 100KB to pass validation
+                        logger.info(f"Payload Received: {size_bytes} bytes in {latency:.2f}s")
+                        return response.content
+                    else:
+                        logger.warning("Payload too small (Low Res). Retrying...")
             except Exception as e:
-                logger.error(f"Connection Failed: {e}")
+                logger.error(f"Handshake Failed (Attempt {attempt}): {e}")
                 time.sleep(2)
         
         return None
 
 # ==============================================================================
-# SECTION 6: APP ORCHESTRATION
+# MODULE 6: UI ORCHESTRATOR
 # ==============================================================================
-class App:
+class ApplicationOrchestrator:
     def __init__(self):
-        self.visuals = StrangerThingsTheme()
-        self.logic = BusinessLogic()
-        self.network = NeuralNetwork()
+        self.visuals = VisualEngine()
+        self.logic = BusinessDataWarehouse()
+        self.network = NetworkLayer()
 
-    def run(self):
-        self.visuals.inject_darkness()
+    def launch(self):
+        # 1. Inject Styles
+        self.visuals.inject_assets()
         
-        st.markdown('<h1 class="stranger-header">MAD GEN</h1>', unsafe_allow_html=True)
-        st.markdown('<p class="stranger-sub">The Upside Down Edition | Maddy Core</p>', unsafe_allow_html=True)
+        # 2. Render Header
+        st.markdown('<div style="text-align:center;">', unsafe_allow_html=True)
+        st.markdown('<h1 class="vecna-header">MAD GEN</h1>', unsafe_allow_html=True)
+        st.markdown('<span class="vecna-sub">VECNA CHRONICLES | ENTERPRISE EDITION</span>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
         
+        # 3. Main Grid
         col1, col2 = st.columns([1, 1], gap="large")
         
-        # --- INPUT PORTAL ---
+        # --- LEFT PANEL: INPUT ---
         with col1:
             st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
-            st.markdown("### 📡 ENTER THE VOID")
-            user_input = st.text_area("SUMMON ENTITY:", height=150, placeholder="Ex: Demogorgon in Chennai, Dark Monster, LIC Poster...")
+            st.markdown("### 👁️ SUMMONING CIRCLE")
+            user_input = st.text_area("DESCRIBE THE ENTITY:", height=200, placeholder="Ex: Demogorgon, LIC Poster, Thawa Ad...")
             
-            if st.button("OPEN PORTAL 🩸"):
+            if st.button("OPEN THE GATE 🩸"):
                 if user_input:
-                    self.execute(user_input)
+                    self.process_workflow(user_input)
                 else:
-                    st.error("BLOOD SACRIFICE REQUIRED (Input Text).")
+                    st.error("BLOOD REQUIRED (INPUT TEXT).")
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # Simulated System Logs
-            st.markdown("""
-            <div style="font-family: 'Courier New'; color: #ff0000; font-size: 0.8rem; opacity: 0.7;">
-            > SYSTEM: ONLINE<br>
-            > DIMENSION: C-137<br>
-            > THREAT LEVEL: MIDNIGHT
+            # System Metrics Simulation
+            st.markdown(f"""
+            <div class="metric-card">
+            CORE STATUS: ONLINE | LATENCY: 24ms | VRAM: 98%
             </div>
             """, unsafe_allow_html=True)
 
-        # --- OUTPUT PORTAL ---
+        # --- RIGHT PANEL: OUTPUT ---
         with col2:
             st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
             st.markdown("### 🖼️ MANIFESTATION")
             
             if 'final_image' in st.session_state:
+                # Display Result
                 st.image(st.session_state['final_image'], use_container_width=True)
                 
+                # Metadata
                 title, slogan = st.session_state['final_meta']
                 st.info(f"**{title}**\n\n{slogan}")
                 
-                st.markdown('<div class="download-zone">', unsafe_allow_html=True)
-                # BINARY DOWNLOAD (MAX QUALITY)
+                # 4K Download Button
+                timestamp = int(time.time())
                 st.download_button(
-                    label="📥 DOWNLOAD RAW ARTIFACT (MAX MB)",
+                    label="📥 DOWNLOAD 4K ARTIFACT (MAX RES)",
                     data=st.session_state['final_image'],
-                    file_name=f"STRANGER_THINGS_{int(time.time())}.png",
+                    file_name=f"VECNA_RENDER_{timestamp}.png",
                     mime="image/png"
                 )
-                st.markdown('</div>', unsafe_allow_html=True)
             else:
-                st.warning("NO SIGNAL DETECTED.")
+                st.warning("THE VOID IS EMPTY.")
             st.markdown('</div>', unsafe_allow_html=True)
 
-    def execute(self, prompt):
-        with st.spinner("🔴 SUMMONING FROM THE UPSIDE DOWN..."):
-            # 1. Context Analysis
-            meta = self.logic.get_context(prompt)
+    def process_workflow(self, prompt):
+        with st.spinner("🔴 TEARING THROUGH DIMENSIONS (RENDERING 4K)..."):
+            # 1. Business Logic
+            meta_data = self.logic.query(prompt)
             
-            # 2. Heavy Binary Fetch
-            image_data = self.network.fetch_heavy_image(prompt)
+            # 2. Network Fetch
+            image_binary = self.network.execute_4k_fetch(prompt)
             
-            if image_data:
-                st.session_state['final_image'] = image_data
-                st.session_state['final_meta'] = meta
+            if image_binary:
+                st.session_state['final_image'] = image_binary
+                st.session_state['final_meta'] = meta_data
                 st.success("ENTITY STABILIZED.")
                 st.rerun()
             else:
-                st.error("CONNECTION SEVERED. RETRY.")
+                st.error("CONNECTION SEVERED BY THE MIND FLAYER. RETRY.")
 
 # ==============================================================================
-# SECTION 7: INITIALIZATION
+# MODULE 7: SYSTEM BOOTSTRAP
 # ==============================================================================
 if __name__ == "__main__":
-    app = App()
-    app.run()
+    try:
+        app = ApplicationOrchestrator()
+        app.launch()
+    except Exception as e:
+        st.error(f"CRITICAL SYSTEM FAILURE: {e}")
