@@ -1,74 +1,135 @@
 import streamlit as st
 import requests
-import io
+from io import BytesIO
+from PIL import Image
+import base64
+import time
 
-# --- APP CONFIG ---
-st.set_page_config(page_title="Mad Gen AI: Ultra HQ", page_icon="🖼️", layout="wide")
+# --- APP CONFIG & THEME ---
+st.set_page_config(
+    page_title="Mad Gen AI | Ultra Professional",
+    page_icon="🔥",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# Custom UI Styling for Maddy
+# Professional CSS Styling for Maddy
 st.markdown("""
-    <style>
-    .stApp { background: linear-gradient(to right, #0f0c29, #302b63, #24243e); color: white; }
-    .stButton>button { 
-        border-radius: 20px; background: #FF4B4B; color: white; font-weight: bold; 
-        width: 100%; border: none; height: 3.5em; transition: 0.3s;
+<style>
+    .stApp {
+        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        color: #ffffff;
     }
-    .stButton>button:hover { background: #ff3333; transform: scale(1.02); }
-    </style>
-    """, unsafe_allow_html=True)
+    .main-title {
+        font-size: 3rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        background: -webkit-linear-gradient(#FF4B2B, #FF416C);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .stButton>button {
+        width: 100%;
+        border-radius: 50px;
+        height: 3.5rem;
+        background: linear-gradient(to right, #FF416C, #FF4B2B);
+        border: none;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+    }
+    .stButton>button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6);
+    }
+    .info-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 20px;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-st.title("🔥 Mad Gen: Ultra High-Quality Wallpapers")
-st.write("Vanakka Maddy! Inbuilt high-res coding ippo activate aayiduchu. No more 3-byte files!")
+# --- SIDEBAR SETTINGS ---
+with st.sidebar:
+    st.image("https://www.gstatic.com/lamda/images/gemini_sparkle_v002_d473530393318e422bb7.svg", width=100)
+    st.title("Mad Gen Settings")
+    st.info("Maddy, ippo inbuilt logic-la images 100% download aagum.")
+    
+    aspect_ratio = st.selectbox("Select Dimension:", ["1:1 (Square)", "16:9 (Cinematic)", "9:16 (Story)"])
+    if aspect_ratio == "1:1 (Square)":
+        width, height = 1024, 1024
+    elif aspect_ratio == "16:9 (Cinematic)":
+        width, height = 1920, 1080
+    else:
+        width, height = 1080, 1920
 
-col1, col2 = st.columns([1, 1])
+# --- MAIN UI ---
+st.markdown('<h1 class="main-title">🔥 MAD GEN: ULTRA HQ ENGINE</h1>', unsafe_allow_html=True)
+st.write("<p style='text-align:center;'>World-class creative engine for Wallpapers & Marketing Posters</p>", unsafe_allow_html=True)
+
+col1, col2 = st.columns([1, 1], gap="large")
 
 with col1:
-    st.subheader("🎨 Your Creative Request")
-    user_input = st.text_input("Enna creative image venum? (Eg: 8k Roman Reigns wallpaper, Cinematic Car...)", 
-                                placeholder="Type your idea here...")
+    st.markdown('<div class="info-card">', unsafe_allow_html=True)
+    st.subheader("💡 Your Creative Vision")
+    user_input = st.text_area("Enna design venum? (Eg: 8k Roman Reigns wallpaper, Cinematic Car...)", 
+                              placeholder="Describe your idea in detail for better quality...", height=150)
     
-    # Inbuilt styles for HQ results
-    quality_mode = st.selectbox("Select Quality Engine:", 
-                                ["Ultra-Realistic 8K", "Cinematic Masterpiece", "Studio Lighting Professional", "Digital Art HQ"])
+    style = st.select_slider("Artistic Style:", options=["Hyper-Realistic", "Cinematic", "3D Render", "Epic Poster", "Anime Style"])
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if st.button("Mad Gen, Magic Pannu! ✨"):
         if user_input:
-            with st.spinner("AI is building your high-quality wallpaper..."):
-                # INBUILT PROMPT ENGINEERING: Background-la quality parameters add panroam
-                final_prompt = f"{user_input}, {quality_mode}, extremely detailed, 8k resolution, photorealistic, masterpiece, vivid colors, sharp focus, 16k wallpaper quality"
+            with st.spinner("AI is crafting your masterpiece... Please wait."):
+                # INBUILT PROMPT ENGINEERING
+                final_prompt = f"{user_input}, {style}, professional color grading, ultra-detailed 8k resolution, cinematic lighting, sharp focus, digital art masterpiece"
                 
-                # Using a high-stability engine
-                img_url = f"https://pollinations.ai/p/{final_prompt.replace(' ', '%20')}?width=1920&height=1080&seed=777&model=flux"
+                # Fetching Logic with Quality Headers
+                img_url = f"https://pollinations.ai/p/{final_prompt.replace(' ', '%20')}?width={width}&height={height}&seed={int(time.time())}&model=flux"
                 
                 try:
-                    # FIXING THE 3-BYTE ISSUE: Fetching real binary data
-                    response = requests.get(img_url, timeout=40)
+                    response = requests.get(img_url, timeout=60)
                     if response.status_code == 200:
-                        # Storing real data in session
-                        st.session_state['real_img_data'] = response.content
-                        st.session_state['display_url'] = img_url
-                        st.session_state['generated'] = True
+                        # VALIDATING IMAGE DATA
+                        img_bytes = response.content
+                        if len(img_bytes) > 1000: # Ensuring it's not a 3-byte error
+                            st.session_state['img_data'] = img_bytes
+                            st.session_state['img_url'] = img_url
+                            st.session_state['generated'] = True
+                            st.session_state['file_name'] = f"MadGen_{int(time.time())}.png"
+                        else:
+                            st.error("Error: Received broken image data. Try again.")
                     else:
-                        st.error("Server busy-ah irukku Maddy. Refresh panni thirumba Magic Pannunga!")
+                        st.error(f"Server Issue (Error {response.status_code}). Please refresh.")
                 except Exception as e:
-                    st.error(f"Error: {e}")
+                    st.error(f"Network error: {e}")
         else:
-            st.warning("Maddy, edhavadhu type pannunga!")
+            st.warning("Input kudunga Maddy!")
 
 with col2:
-    st.subheader("🖼️ High-Res Preview")
-    if 'generated' in st.session_state:
-        # Show image in UI
-        st.image(st.session_state['display_url'], caption="Mad Gen Premium Result")
+    st.subheader("🖼️ Premium Output Preview")
+    if 'generated' in st.session_state and st.session_state['generated']:
+        # DISPLAY IMAGE
+        st.image(st.session_state['img_data'], use_column_width=True)
         
-        # PROPER DOWNLOAD BUTTON: Converts binary data to a real file
-        # Idhu dhaan 3 bytes-ai 3 MB-ah maathum!
+        # QUALITY CHECK INFO
+        st.success(f"✅ Image Ready! Size: {len(st.session_state['img_data']) // 1024} KB")
+        
+        # THE ULTIMATE DOWNLOAD BUTTON
         st.download_button(
-            label="📥 DOWNLOAD HD WALLPAPER (Original Quality)",
-            data=st.session_state['real_img_data'],
-            file_name=f"mad_gen_wallpaper.png",
+            label="📥 DOWNLOAD HD IMAGE",
+            data=st.session_state['img_data'],
+            file_name=st.session_state['file_name'],
             mime="image/png"
         )
+    else:
+        st.info("Input kuduthu Magic Pannunga Maddy! Result inga varum.")
 
 st.divider()
-st.caption("Mad Gen AI | Inbuilt Wallpaper Engine v2.0 ✅")
+st.markdown("<p style='text-align:center;'>Mad Gen AI | Powered by Maddy's Creativity 🚀</p>", unsafe_allow_html=True)
