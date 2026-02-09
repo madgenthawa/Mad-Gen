@@ -5,180 +5,169 @@ import time
 import random
 import logging
 import uuid
-import sys
 from datetime import datetime
-from typing import Optional, Dict, List, Tuple
+from typing import Optional, Tuple
 
 # ==============================================================================
-# SECTION 1: SYSTEM KERNEL & DIAGNOSTICS
+# SECTION 1: SYSTEM KERNEL & LOGGING
 # ==============================================================================
-# We establish a high-level logging protocol to monitor system health.
 logging.basicConfig(
-    format='[%(asctime)s] %(levelname)s::MAD_GEN_CORE::%(message)s',
+    format='[%(asctime)s] %(levelname)s::STRANGER_CORE::%(message)s',
     level=logging.INFO,
     datefmt='%H:%M:%S'
 )
-logger = logging.getLogger("MadGenProMax")
+logger = logging.getLogger("MadGenStrangerThings")
 
-# Initialize Session State for Persistent Data Storage
 if 'session_id' not in st.session_state:
     st.session_state['session_id'] = str(uuid.uuid4())
-    st.session_state['boot_time'] = time.time()
-    st.session_state['total_generations'] = 0
-    logger.info(f"System Boot Sequence Initiated. Session ID: {st.session_state['session_id']}")
+    logger.info(f"Portal Opened. Session ID: {st.session_state['session_id']}")
 
 # ==============================================================================
-# SECTION 2: APP CONFIGURATION & METADATA
+# SECTION 2: APP CONFIGURATION
 # ==============================================================================
 st.set_page_config(
-    page_title="Mad Gen: Dragon Core",
-    page_icon="🔥",
+    page_title="Mad Gen: Stranger Things Edition",
+    page_icon="🩸",
     layout="wide",
-    initial_sidebar_state="collapsed",
-    menu_items={
-        'About': "Mad Gen Titanium Pro Max v99.0 | Built exclusively for Maddy."
-    }
+    initial_sidebar_state="collapsed"
 )
 
 # ==============================================================================
-# SECTION 3: THE "DRAGON FIRE" VISUAL ENGINE (CSS)
+# SECTION 3: THE "UPSIDE DOWN" VISUAL ENGINE (CSS)
 # ==============================================================================
-class VisualEngine:
+class StrangerThingsTheme:
     """
-    Manages the High-Performance CSS, Animations, and Dragon Backgrounds.
+    Manages the 'Upside Down' aesthetic: Red Neon, Dark Monsters, Glassmorphism.
     """
     
-    # High-Definition Dragon Wallpaper URL
-    WALLPAPER_URL = "https://images.alphacoders.com/605/605592.jpg" 
+    # High-Res Stranger Things Mind Flayer Background
+    WALLPAPER_URL = "https://images.alphacoders.com/133/1330612.png" 
 
     @staticmethod
-    def inject_styles():
-        """Infects the DOM with high-level CSS for glassmorphism and animations."""
+    def inject_darkness():
+        """Infects the DOM with the Stranger Things aesthetic."""
         st.markdown(f"""
         <style>
-            /* --- CORE BACKGROUND SYSTEM --- */
+            @import url('https://fonts.googleapis.com/css2?family=Benguiat&display=swap');
+
+            /* --- CORE BACKGROUND: THE MIND FLAYER --- */
             .stApp {{
-                background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url("{VisualEngine.WALLPAPER_URL}");
+                background: linear-gradient(rgba(0,0,0,0.4), rgba(20,0,0,0.9)), url("{StrangerThingsTheme.WALLPAPER_URL}");
                 background-size: cover;
                 background-position: center;
                 background-attachment: fixed;
-                color: #ffffff;
+                color: #ff0000;
             }}
 
-            /* --- KEYFRAME ANIMATIONS --- */
-            @keyframes fire-pulse {{
-                0% {{ text-shadow: 0 0 10px #FF4500; }}
-                50% {{ text-shadow: 0 0 30px #FFD700; }}
-                100% {{ text-shadow: 0 0 10px #FF4500; }}
-            }}
-
-            @keyframes border-glow {{
-                0% {{ border-color: #FF4500; box-shadow: 0 0 10px #FF4500; }}
-                50% {{ border-color: #FFD700; box-shadow: 0 0 20px #FFD700; }}
-                100% {{ border-color: #FF4500; box-shadow: 0 0 10px #FF4500; }}
+            /* --- STRANGER THINGS ANIMATIONS --- */
+            @keyframes neon-flicker {{
+                0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {{
+                    text-shadow: -0.2rem -0.2rem 1rem #fff, 0.2rem 0.2rem 1rem #fff, 0 0 2rem #ff00de, 0 0 4rem #ff00de, 0 0 6rem #ff00de, 0 0 8rem #ff00de, 0 0 10rem #ff00de;
+                }}
+                20%, 24%, 55% {{        
+                    text-shadow: none;
+                }}
             }}
 
             /* --- TYPOGRAPHY --- */
-            .mega-header {{
-                font-family: 'Impact', sans-serif;
+            .stranger-header {{
+                font-family: 'ITC Benguiat', serif; /* The Stranger Things Font */
                 font-size: 5rem;
                 text-align: center;
                 text-transform: uppercase;
-                background: -webkit-linear-gradient(#FFD700, #FF4500);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                animation: fire-pulse 3s infinite;
-                margin-bottom: 0;
+                color: #ff0000;
+                text-shadow: 0 0 10px #000, 2px 2px 0px #330000;
+                letter-spacing: -2px;
+                margin-top: 20px;
+                border-bottom: 2px solid #ff0000;
+                padding-bottom: 20px;
             }}
             
-            .sub-header {{
+            .stranger-sub {{
                 text-align: center;
-                color: #FFD700;
-                font-size: 1.5rem;
-                letter-spacing: 2px;
+                color: #fff;
+                font-size: 1.2rem;
+                letter-spacing: 5px;
                 margin-bottom: 40px;
-                font-weight: 300;
+                text-transform: uppercase;
+                opacity: 0.8;
             }}
 
             /* --- GLASSMORPHISM CONTAINERS --- */
             .glass-panel {{
-                background: rgba(0, 0, 0, 0.7);
-                backdrop-filter: blur(15px);
-                border: 2px solid rgba(255, 69, 0, 0.5);
-                border-radius: 20px;
+                background: rgba(20, 0, 0, 0.7); /* Dark Red Tint */
+                backdrop-filter: blur(10px);
+                border: 1px solid #ff0000;
+                border-radius: 15px;
                 padding: 30px;
-                margin-bottom: 20px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-                animation: border-glow 5s infinite;
+                box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
             }}
 
             /* --- HIGH-PERFORMANCE INPUTS --- */
             .stTextArea textarea {{
-                background-color: rgba(0, 0, 0, 0.8) !important;
-                color: #FFD700 !important;
-                border: 1px solid #555 !important;
-                font-size: 1.2rem !important;
-                border-radius: 10px !important;
+                background-color: rgba(0, 0, 0, 0.9) !important;
+                color: #ff0000 !important;
+                border: 1px solid #ff0000 !important;
+                font-family: 'Courier New', monospace !important;
+                font-size: 1.1rem !important;
             }}
 
-            /* --- TITANIUM BUTTONS --- */
+            /* --- NEON BUTTONS --- */
             .stButton > button {{
                 width: 100%;
-                background: linear-gradient(90deg, #FF4500, #FF8C00);
-                color: white;
+                background: transparent;
+                color: #ff0000;
+                font-family: 'ITC Benguiat', serif;
                 font-weight: 900;
-                border: none;
-                border-radius: 10px;
+                border: 2px solid #ff0000;
+                border-radius: 5px;
                 height: 70px;
                 font-size: 24px;
                 text-transform: uppercase;
-                transition: transform 0.1s;
-                text-shadow: 2px 2px 4px black;
+                transition: all 0.3s;
+                box-shadow: 0 0 10px #ff0000;
             }}
             .stButton > button:hover {{
-                transform: scale(1.02);
-                background: linear-gradient(90deg, #FFD700, #FF4500);
+                background: #ff0000;
                 color: black;
+                box-shadow: 0 0 40px #ff0000, 0 0 80px #ff0000;
             }}
             
-            /* --- DOWNLOAD AREA --- */
+            /* --- DOWNLOAD ZONE --- */
             .download-zone {{
-                text-align: center;
+                border: 1px dashed #ff0000;
                 padding: 20px;
-                border-top: 1px solid #333;
+                text-align: center;
                 margin-top: 20px;
+                background: rgba(0,0,0,0.8);
             }}
 
         </style>
         """, unsafe_allow_html=True)
 
 # ==============================================================================
-# SECTION 4: BUSINESS INTELLIGENCE (THAMA & LIC DATA)
+# SECTION 4: BUSINESS INTELLIGENCE (THAMA & LIC)
 # ==============================================================================
 class BusinessLogic:
     """
-    Handles Tamil Localization and Business Context Detection.
+    Handles Tamil Localization. Detects context for LIC, Thawa, or Monsters.
     """
     def __init__(self):
         self.slogans = {
             "LIC": [
-                "LIC: உங்கள் நம்பிக்கையின் மறுபெயர். 🏠",
-                "பாதுகாப்பான எதிர்காலம், வளமான வாழ்க்கை - LIC Housing Finance.",
-                "வீடு கட்டும் கனவா? LIC இருக்க கவலை எதற்கு?"
+                "LIC: இருளான நேரத்திலும் ஒளி தரும் விளக்கு. 🏠",
+                "ஆபத்து காலத்தில் கைகொடுக்கும் நண்பன் - LIC Housing Finance.",
+                "உங்கள் குடும்பத்தின் பாதுகாப்பு அரண்."
             ],
             "THAWA": [
-                "THAWA Financial: உங்கள் நிதி சுதந்திரம், எங்கள் லட்சியம். 📈",
-                "Loan Against Property (LAP): எளிய முறை, உடனடி பணம்.",
-                "உங்கள் தொழில் வளர்ச்சிக்கு என்றும் துணை நிற்கும் - தவா நிதி சேவை."
+                "THAWA Financial: நிதி சிக்கல்களை உடைத்தெறியுங்கள். 📈",
+                "Loan Against Property (LAP): உங்கள் சொத்து, உங்கள் பலம்.",
+                "வேகமான கடன், முழுமையான வெளிப்படைத்தன்மை."
             ],
-            "DRAGON": [
-                "DRAGON MODE: Fire and Fury Unleashed! 🔥",
-                "The power of the beast is in your hands.",
-                "Mythical Quality Generated."
-            ],
-            "GENERIC": [
-                "Mad Gen Pro: Quality Beyond Limits. ✨",
-                "Creating your imagination in 8K resolution."
+            "MONSTER": [
+                "THE UPSIDE DOWN: The Mind Flayer Awakes. 🕷️",
+                "Demogorgon Mode: Pure Terror & Quality.",
+                "Run while you can. The image is loading."
             ]
         }
 
@@ -186,90 +175,92 @@ class BusinessLogic:
         p = prompt.upper()
         if "LIC" in p: return ("LIC HOUSING FINANCE", random.choice(self.slogans["LIC"]))
         if "THAWA" in p: return ("THAWA FINANCIAL SERVICES", random.choice(self.slogans["THAWA"]))
-        if "DRAGON" in p: return ("TITANIUM DRAGON MODE", random.choice(self.slogans["DRAGON"]))
-        return ("MAD GEN CREATIVE", random.choice(self.slogans["GENERIC"]))
+        if "STRANGER" in p or "MONSTER" in p or "ANIMAL" in p: return ("STRANGER THINGS MODE", random.choice(self.slogans["MONSTER"]))
+        return ("MAD GEN TITANIUM", "Creating Masterpiece in the Void...")
 
 # ==============================================================================
-# SECTION 5: NETWORK CONTROLLER (FASTEST DOWNLOAD LOGIC)
+# SECTION 5: NETWORK CONTROLLER (MAX FILE SIZE LOGIC)
 # ==============================================================================
-class NetworkEngine:
+class NeuralNetwork:
     """
-    Manages API calls with Binary Validation to prevent 3-byte errors.
-    Uses 'flux' model for maximum detail.
+    Manages API calls with 'Raw Mode' enabled to maximize file size (MB).
     """
     def __init__(self):
         self.base_url = "https://image.pollinations.ai/prompt/"
         
-    def fetch_image(self, prompt: str) -> bytes:
-        # 1. Enhance Prompt for 8K
-        enhanced_prompt = f"{prompt}, 8k resolution, photorealistic, cinematic lighting, highly detailed, sharp focus"
+    def fetch_heavy_image(self, prompt: str) -> bytes:
+        # 1. Force Maximum Complexity (Increases File Size)
+        # We use keywords that force the AI to add texture, noise, and detail.
+        enhanced_prompt = f"{prompt}, 8k resolution, raw photo, ultra-detailed, intricate textures, noise, film grain, cinematic lighting, wide angle, uncompressed"
         
-        # 2. Safety Encoding (Fixes Cloudflare 400 Error)
+        # 2. Safety Encoding
         safe_prompt = urllib.parse.quote(enhanced_prompt)
         seed = int(time.time())
         
-        # 3. Construct URL
-        url = f"{self.base_url}{safe_prompt}?width=1024&height=1024&seed={seed}&nologo=true&model=flux"
+        # 3. URL Construction (Flux Model for Realism)
+        url = f"{self.base_url}{safe_prompt}?width=1280&height=1280&seed={seed}&nologo=true&model=flux"
         
         # 4. Fetch with Retry Logic
         for i in range(3):
             try:
-                logger.info(f"Attempt {i+1}: Connecting to Neural Cloud...")
-                response = requests.get(url, timeout=45)
+                logger.info(f"Attempt {i+1}: Opening Portal...")
+                # Increased timeout to 90s because large files take longer
+                response = requests.get(url, timeout=90)
                 
-                # 5. The Critical Check (Must be > 10KB)
-                if response.status_code == 200 and len(response.content) > 10000:
-                    logger.info("Success: Binary Data Received.")
+                # 5. Validation (Must be valid binary)
+                if response.status_code == 200 and len(response.content) > 50000:
+                    file_size_mb = len(response.content) / (1024 * 1024)
+                    logger.info(f"Success: Received {file_size_mb:.2f} MB")
                     return response.content
             except Exception as e:
                 logger.error(f"Connection Failed: {e}")
-                time.sleep(1)
+                time.sleep(2)
         
         return None
 
 # ==============================================================================
-# SECTION 6: USER INTERFACE (THE VIEW)
+# SECTION 6: APP ORCHESTRATION
 # ==============================================================================
-class AppInterface:
+class App:
     def __init__(self):
-        self.visuals = VisualEngine()
+        self.visuals = StrangerThingsTheme()
         self.logic = BusinessLogic()
-        self.network = NetworkEngine()
+        self.network = NeuralNetwork()
 
-    def render(self):
-        self.visuals.inject_styles()
+    def run(self):
+        self.visuals.inject_darkness()
         
-        st.markdown('<h1 class="mega-header">MAD GEN TITANIUM</h1>', unsafe_allow_html=True)
-        st.markdown('<p class="sub-header">Dragon Edition | Thawa Financials | Maddy Core</p>', unsafe_allow_html=True)
+        st.markdown('<h1 class="stranger-header">MAD GEN</h1>', unsafe_allow_html=True)
+        st.markdown('<p class="stranger-sub">The Upside Down Edition | Maddy Core</p>', unsafe_allow_html=True)
         
         col1, col2 = st.columns([1, 1], gap="large")
         
-        # --- INPUT PANEL ---
+        # --- INPUT PORTAL ---
         with col1:
             st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
-            st.markdown("### 📡 COMMAND CENTER")
-            user_input = st.text_area("ENTER PROMPT:", height=150, placeholder="Ex: Golden Dragon, LIC Poster, Thawa Loan Ad...")
+            st.markdown("### 📡 ENTER THE VOID")
+            user_input = st.text_area("SUMMON ENTITY:", height=150, placeholder="Ex: Demogorgon in Chennai, Dark Monster, LIC Poster...")
             
-            if st.button("INITIATE LAUNCH 🚀"):
+            if st.button("OPEN PORTAL 🩸"):
                 if user_input:
                     self.execute(user_input)
                 else:
-                    st.error("INPUT REQUIRED.")
+                    st.error("BLOOD SACRIFICE REQUIRED (Input Text).")
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # System Status Log (To make it look high-level)
-            with st.expander("SYSTEM DIAGNOSTICS"):
-                st.code(f"""
-                STATUS: ONLINE
-                SESSION: {st.session_state['session_id']}
-                MEMORY: OPTIMAL
-                LATENCY: 12ms
-                """, language="yaml")
+            # Simulated System Logs
+            st.markdown("""
+            <div style="font-family: 'Courier New'; color: #ff0000; font-size: 0.8rem; opacity: 0.7;">
+            > SYSTEM: ONLINE<br>
+            > DIMENSION: C-137<br>
+            > THREAT LEVEL: MIDNIGHT
+            </div>
+            """, unsafe_allow_html=True)
 
-        # --- OUTPUT PANEL ---
+        # --- OUTPUT PORTAL ---
         with col2:
             st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
-            st.markdown("### 🖼️ VISUAL OUTPUT")
+            st.markdown("### 🖼️ MANIFESTATION")
             
             if 'final_image' in st.session_state:
                 st.image(st.session_state['final_image'], use_container_width=True)
@@ -278,37 +269,37 @@ class AppInterface:
                 st.info(f"**{title}**\n\n{slogan}")
                 
                 st.markdown('<div class="download-zone">', unsafe_allow_html=True)
-                # BINARY DOWNLOAD (FASTEST & SAFEST)
+                # BINARY DOWNLOAD (MAX QUALITY)
                 st.download_button(
-                    label="📥 DOWNLOAD RAW BINARY (HD)",
+                    label="📥 DOWNLOAD RAW ARTIFACT (MAX MB)",
                     data=st.session_state['final_image'],
-                    file_name=f"TITANIUM_RENDER_{int(time.time())}.png",
+                    file_name=f"STRANGER_THINGS_{int(time.time())}.png",
                     mime="image/png"
                 )
                 st.markdown('</div>', unsafe_allow_html=True)
             else:
-                st.info("AWAITING DATA STREAM...")
+                st.warning("NO SIGNAL DETECTED.")
             st.markdown('</div>', unsafe_allow_html=True)
 
     def execute(self, prompt):
-        with st.spinner("🔄 TITANIUM CORE PROCESSING..."):
+        with st.spinner("🔴 SUMMONING FROM THE UPSIDE DOWN..."):
             # 1. Context Analysis
             meta = self.logic.get_context(prompt)
             
-            # 2. Binary Fetch
-            image_data = self.network.fetch_image(prompt)
+            # 2. Heavy Binary Fetch
+            image_data = self.network.fetch_heavy_image(prompt)
             
             if image_data:
                 st.session_state['final_image'] = image_data
                 st.session_state['final_meta'] = meta
-                st.success("RENDER COMPLETE.")
+                st.success("ENTITY STABILIZED.")
                 st.rerun()
             else:
-                st.error("SERVER TIMEOUT. PLEASE RETRY.")
+                st.error("CONNECTION SEVERED. RETRY.")
 
 # ==============================================================================
-# SECTION 7: SYSTEM BOOTSTRAP
+# SECTION 7: INITIALIZATION
 # ==============================================================================
 if __name__ == "__main__":
-    app = AppInterface()
-    app.render()
+    app = App()
+    app.run()
