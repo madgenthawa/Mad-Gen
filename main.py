@@ -5,118 +5,196 @@ import time
 import random
 import logging
 import uuid
-import json
 from datetime import datetime
-from typing import Optional, Dict, List, Tuple, Any
 
 # ==============================================================================
-# MODULE 1: SYSTEM KERNEL & ADVANCED LOGGING
-# ==============================================================================
-# We configure a 'Verbose' logger to simulate an industrial operating system.
-logging.basicConfig(
-    format='[%(asctime)s] %(levelname)s::HELLFIRE_CORE::%(message)s',
-    level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-logger = logging.getLogger("MadGenHellfire")
-
-class SystemKernel:
-    """
-    The Central Processing Unit of the application.
-    Manages Memory, Session States, and Boot Protocols.
-    """
-    @staticmethod
-    def initialize_session():
-        """Bootstraps the session state variables if they don't exist."""
-        if 'session_id' not in st.session_state:
-            st.session_state['session_id'] = str(uuid.uuid4())
-            st.session_state['boot_time'] = datetime.now().strftime("%H:%M:%S")
-            st.session_state['history'] = [] # Stores prompt history
-            st.session_state['render_count'] = 0
-            logger.info(f"SYSTEM BOOT COMPLETE. SESSION: {st.session_state['session_id']}")
-
-# Initialize the Kernel immediately
-SystemKernel.initialize_session()
-
-# ==============================================================================
-# MODULE 2: APP CONFIGURATION
+# 1. SYSTEM KERNEL CONFIGURATION
 # ==============================================================================
 st.set_page_config(
-    page_title="Mad Gen: Hellfire Edition",
-    page_icon="🔥",
+    page_title="Mad Gen: Omega",
+    page_icon="🩸",
     layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'https://google.com',
-        'About': "Mad Gen Hellfire Edition v100.0 | High-Performance Engine."
-    }
+    initial_sidebar_state="expanded"
 )
 
+# Configure High-Level Logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logger = logging.getLogger("MadGenOmega")
+
+if 'session_id' not in st.session_state:
+    st.session_state['session_id'] = str(uuid.uuid4())
+    st.session_state['history'] = []
+
 # ==============================================================================
-# MODULE 3: THE "HELLFIRE" VISUAL ENGINE (POLISHED CSS)
+# 2. VISUAL ENGINE (STRANGER THINGS THEME)
 # ==============================================================================
-class VisualEngine:
-    """
-    Manages the Visual Layer.
-    FOCUS: The Input Box (Chat Box) is heavily styled here.
-    """
-    
-    # 4K Upside Down Background
-    WALLPAPER_URL = "https://images.alphacoders.com/132/1329587.jpeg" 
+class Visuals:
+    WALLPAPER = "https://images.alphacoders.com/132/1329587.jpeg" # Vecna Background
 
     @staticmethod
-    def inject_styles():
+    def inject():
         st.markdown(f"""
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Roboto+Mono:wght@500&display=swap');
-
-            /* --- 1. GLOBAL ATMOSPHERE --- */
+            
+            /* GLOBAL THEME */
             .stApp {{
-                background: linear-gradient(rgba(0,0,0,0.7), rgba(20,0,0,0.9)), url("{VisualEngine.WALLPAPER_URL}");
+                background: linear-gradient(rgba(0,0,0,0.8), rgba(20,0,0,0.9)), url("{Visuals.WALLPAPER}");
                 background-size: cover;
-                background-position: center;
                 background-attachment: fixed;
                 color: #ff0000;
             }}
-
-            /* --- 2. THE CHAT BOX (INPUT AREA) - HEAVILY POLISHED --- */
-            /* This is the specific part you asked for */
-            .stTextArea label {{
-                color: #ff0000 !important;
-                font-family: 'Creepster', cursive !important;
-                font-size: 1.5rem !important;
-                letter-spacing: 2px;
-                text-shadow: 0 0 10px #f00;
+            
+            /* HEADER STYLING */
+            .omega-title {{
+                font-family: 'Creepster', cursive;
+                font-size: 5rem;
+                text-align: center;
+                color: #ff0000;
+                text-shadow: 0 0 20px #000, 2px 2px 0px #500;
+                margin-bottom: 0;
             }}
             
+            /* INPUT BOX STYLING (The requested polish) */
             .stTextArea textarea {{
-                background-color: #000000 !important; /* Pure Black Void */
-                color: #ff3333 !important; /* Glowing Red Text */
-                font-family: 'Roboto Mono', monospace !important;
-                font-size: 1.1rem !important;
-                border: 2px solid #800000 !important; /* Dark Red Border */
-                border-radius: 10px !important;
-                padding: 15px !important;
-                box-shadow: inset 0 0 30px #200000 !important; /* Inner Glow */
-                transition: all 0.3s ease-in-out;
-            }}
-            
-            .stTextArea textarea:focus {{
-                border: 2px solid #ff0000 !important; /* Bright Red on Focus */
-                box-shadow: 0 0 20px #ff0000, inset 0 0 20px #500 !important;
-            }}
-
-            /* --- 3. SIDEBAR STYLING --- */
-            [data-testid="stSidebar"] {{
-                background-color: rgba(10, 0, 0, 0.95);
-                border-right: 2px solid #500;
-            }}
-            
-            [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {{
+                background-color: #000 !important;
                 color: #ff0000 !important;
-                font-family: 'Creepster', cursive !important;
+                font-family: 'Roboto Mono', monospace !important;
+                border: 2px solid #800 !important;
+                border-radius: 10px !important;
+                box-shadow: inset 0 0 20px #300 !important;
             }}
-
-            /* --- 4. BUTTONS --- */
+            .stTextArea textarea:focus {{
+                border-color: #f00 !important;
+                box-shadow: 0 0 30px #f00 !important;
+            }}
+            
+            /* BUTTONS */
             .stButton > button {{
-                width: 10
+                background: #000;
+                color: #f00;
+                border: 2px solid #f00;
+                font-family: 'Creepster', cursive;
+                font-size: 1.5rem;
+                height: 60px;
+                width: 100%;
+                transition: 0.3s;
+            }}
+            .stButton > button:hover {{
+                background: #f00;
+                color: #000;
+                box-shadow: 0 0 40px #f00;
+            }}
+            
+            /* DOWNLOAD ZONE */
+            .download-box {{
+                border: 1px dashed #f00;
+                padding: 20px;
+                text-align: center;
+                background: rgba(0,0,0,0.8);
+                border-radius: 10px;
+                margin-top: 20px;
+            }}
+        </style>
+        """, unsafe_allow_html=True)
+
+# ==============================================================================
+# 3. BUSINESS LOGIC (LIC & THAWA)
+# ==============================================================================
+class Brain:
+    @staticmethod
+    def get_slogan(prompt):
+        p = prompt.upper()
+        if "LIC" in p:
+            return "LIC HOUSING FINANCE", "பாதுகாப்பான எதிர்காலம், வளமான வாழ்க்கை. 🏠"
+        elif "THAWA" in p:
+            return "THAWA FINANCIAL SERVICES", "நிதி சிக்கல்களை உடைத்தெறியுங்கள் (LAP Specialist). 📈"
+        elif "STRANGER" in p or "MONSTER" in p:
+            return "HELLFIRE CLUB", "Vecna is watching. 🩸"
+        else:
+            return "MAD GEN OMEGA", "Creating Masterpiece from the Void... ✨"
+
+# ==============================================================================
+# 4. NETWORK ENGINE (BINARY DOWNLOADER)
+# ==============================================================================
+class Network:
+    @staticmethod
+    def fetch(prompt):
+        # Enhance for 8K quality
+        enhanced = f"{prompt}, 8k resolution, raw photo, cinematic lighting, ultra detailed, uncompressed"
+        safe_prompt = urllib.parse.quote(enhanced)
+        seed = int(time.time())
+        url = f"https://image.pollinations.ai/prompt/{safe_prompt}?width=1024&height=1024&seed={seed}&nologo=true&model=flux"
+        
+        try:
+            # 60 Second Timeout
+            r = requests.get(url, timeout=60)
+            if r.status_code == 200 and len(r.content) > 50000: # Check > 50KB
+                return r.content
+        except Exception as e:
+            return None
+        return None
+
+# ==============================================================================
+# 5. MAIN APPLICATION LOOP
+# ==============================================================================
+def main():
+    Visuals.inject()
+    
+    # Header
+    st.markdown('<h1 class="omega-title">MAD GEN</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align:center; color:#fff; letter-spacing:3px;">OMEGA EDITION | MADDY CORE</p>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([1, 1], gap="large")
+    
+    # --- INPUT SECTION ---
+    with col1:
+        st.markdown("### 👁️ SUMMONING PORTAL")
+        user_input = st.text_area("DESCRIBE ENTITY:", height=150, placeholder="Ex: Demogorgon, LIC Poster, Thawa Ad...")
+        
+        if st.button("OPEN GATE 🩸"):
+            if user_input:
+                with st.spinner("🔴 CONNECTING TO UPSIDE DOWN..."):
+                    data = Network.fetch(user_input)
+                    if data:
+                        # Save to history
+                        st.session_state['history'].append(user_input)
+                        # Save Image
+                        st.session_state['final_image'] = data
+                        # Save Meta
+                        st.session_state['final_meta'] = Brain.get_slogan(user_input)
+                        st.success("ENTITY STABILIZED.")
+                        st.rerun()
+                    else:
+                        st.error("CONNECTION FAILED. RETRY.")
+            else:
+                st.warning("BLOOD (INPUT) REQUIRED.")
+                
+        # Sidebar History
+        with st.sidebar:
+            st.markdown("## 📜 HISTORY")
+            for h in reversed(st.session_state['history'][-5:]):
+                st.caption(f"• {h}")
+
+    # --- OUTPUT SECTION ---
+    with col2:
+        st.markdown("### 🖼️ MANIFESTATION")
+        if 'final_image' in st.session_state:
+            st.image(st.session_state['final_image'], use_container_width=True)
+            
+            title, slogan = st.session_state['final_meta']
+            st.info(f"**{title}**\n\n{slogan}")
+            
+            st.markdown('<div class="download-box">', unsafe_allow_html=True)
+            st.download_button(
+                label="📥 DOWNLOAD HD ARTIFACT",
+                data=st.session_state['final_image'],
+                file_name=f"OMEGA_RENDER_{int(time.time())}.png",
+                mime="image/png"
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+        else:
+            st.info("THE VOID IS EMPTY.")
+
+if __name__ == "__main__":
+    main()
