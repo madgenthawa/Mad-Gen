@@ -353,3 +353,180 @@ class NetworkController:
                     MemoryCore.log(f"Server Error: {response.status_code}")
                     
             except Exception as e:
+                MemoryCore.log(f"Network Failure: {str(e)}")
+        
+        MemoryCore.log("Critical Failure: All Strategies Exhausted.")
+        return None
+
+# ==============================================================================
+# --------------------- SECTION 6: UI COMPONENT FACTORY ------------------------
+# ==============================================================================
+
+class UIComponents:
+    """
+    Generates complex UI elements like the Sidebar, Gallery, and Terminal.
+    """
+    
+    @staticmethod
+    def render_sidebar():
+        with st.sidebar:
+            st.markdown("## ⚙️ CONTROL DECK")
+            st.divider()
+            
+            # Model Selection
+            model = st.selectbox("Neural Model:", ["flux", "turbo", "unity"], index=0)
+            
+            # Aspect Ratio
+            ratio = st.selectbox("Aspect Ratio:", ["Square (1:1)", "Cinematic (16:9)", "Portrait (9:16)"])
+            
+            # Mapping Ratio to Pixels
+            dims = (1024, 1024)
+            if "Cinematic" in ratio: dims = (1280, 720)
+            if "Portrait" in ratio: dims = (720, 1280)
+            
+            st.divider()
+            st.markdown("### 📊 SYSTEM DIAGNOSTICS")
+            
+            # Fake Terminal Window
+            log_text = "\n".join(st.session_state['logs'])
+            st.markdown(f"""
+            <div class="terminal-window">
+            {log_text}
+            <br>>_ SYSTEM READY
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.divider()
+            if st.button("🔴 RESET SYSTEM"):
+                st.session_state.clear()
+                st.rerun()
+                
+            return model, dims
+
+    @staticmethod
+    def render_gallery():
+        """Displays previous images in a grid."""
+        if not st.session_state['gallery']:
+            return
+
+        st.markdown("---")
+        st.markdown("### 🎞️ ARCHIVE GALLERY")
+        
+        # Create a grid of 3 columns
+        cols = st.columns(3)
+        
+        for idx, item in enumerate(st.session_state['gallery']):
+            col = cols[idx % 3]
+            with col:
+                st.image(item['image'], use_container_width=True)
+                st.caption(f"{item['category']} | {item['time']}")
+
+# ==============================================================================
+# --------------------- SECTION 7: MAIN APPLICATION LOOP -----------------------
+# ==============================================================================
+
+class LeviathanApp:
+    def __init__(self):
+        self.visuals = VisualEngine()
+        self.network = NetworkController()
+        self.brain = DataWarehouse()
+        self.ui = UIComponents()
+
+    def launch(self):
+        # 1. Inject CSS
+        self.visuals.inject_assets()
+        
+        # 2. Render Header
+        st.markdown('<h1 class="leviathan-title">MAD GEN</h1>', unsafe_allow_html=True)
+        st.markdown('<p style="text-align:center; color:#ccc; letter-spacing:4px;">LEVIATHAN ARCHITECTURE | 500+ LINES | MADDY CORE</p>', unsafe_allow_html=True)
+        
+        # 3. Render Sidebar
+        model, (width, height) = self.ui.render_sidebar()
+        
+        # 4. Main Grid
+        col1, col2 = st.columns([1, 1], gap="large")
+        
+        # --- INPUT COLUMN ---
+        with col1:
+            st.markdown("### 👁️ SUMMONING CIRCLE")
+            user_input = st.text_area(
+                "DESCRIBE THE ENTITY:", 
+                height=180, 
+                placeholder="Ex: Golden Dragon, LIC Poster, Thawa Ad..."
+            )
+            
+            if st.button("EXECUTE PROTOCOL 🩸"):
+                if user_input:
+                    self.execute(user_input, width, height, model)
+                else:
+                    st.error("BLOOD SACRIFICE (INPUT) REQUIRED.")
+                    MemoryCore.log("Error: Input Missing.")
+
+        # --- OUTPUT COLUMN ---
+        with col2:
+            st.markdown("### 🖼️ MANIFESTATION")
+            
+            if 'final_image' in st.session_state:
+                st.image(st.session_state['final_image'], use_container_width=True)
+                
+                # Show Metadata
+                title, slogan = st.session_state['final_meta']
+                st.info(f"**{title}**\n\n{slogan}")
+                
+                # Download Button
+                timestamp = int(time.time())
+                st.download_button(
+                    label="📥 DOWNLOAD LEVIATHAN ARTIFACT (HD)",
+                    data=st.session_state['final_image'],
+                    file_name=f"LEVIATHAN_{timestamp}.png",
+                    mime="image/png"
+                )
+            else:
+                st.markdown("""
+                <div style="border:1px dashed #500; padding:40px; text-align:center; color:#500;">
+                THE VOID IS EMPTY.<br>AWAITING DATA STREAM.
+                </div>
+                """, unsafe_allow_html=True)
+                
+        # 5. Render Gallery at Bottom
+        self.ui.render_gallery()
+
+    def execute(self, prompt, w, h, model):
+        MemoryCore.log(f"Processing Request: {prompt[:20]}...")
+        
+        with st.spinner("🔴 OPENING PORTAL TO NEURAL CLOUD..."):
+            # 1. Analyze Prompt
+            enhanced_prompt, category, slogan = self.brain.get_context(prompt)
+            MemoryCore.log(f"Logic Applied: {category}")
+            
+            # 2. Fetch Image
+            image_bytes = self.network.generate_image(enhanced_prompt, w, h, model)
+            
+            # 3. Handle Result
+            if image_bytes:
+                # Save to State
+                st.session_state['final_image'] = image_bytes
+                st.session_state['final_meta'] = (category, slogan)
+                
+                # Add to Gallery
+                MemoryCore.add_to_gallery(image_bytes, prompt, category)
+                
+                MemoryCore.log("Generation Complete.")
+                st.success("ENTITY STABILIZED.")
+                st.rerun()
+            else:
+                st.error("CONNECTION SEVERED. SERVERS OVERLOADED.")
+                MemoryCore.log("Critical Error: Workflow Aborted.")
+
+# ==============================================================================
+# --------------------- SECTION 8: SYSTEM BOOTSTRAP ----------------------------
+# ==============================================================================
+
+if __name__ == "__main__":
+    try:
+        # Instantiate and Launch the Application
+        app = LeviathanApp()
+        app.launch()
+    except Exception as e:
+        st.error(f"SYSTEM CRASH: {e}")
+        logging.critical(f"System Crash: {e}")
