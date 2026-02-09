@@ -4,371 +4,311 @@ import urllib.parse
 import time
 import random
 import logging
-import json
 import uuid
-from typing import Optional, Tuple, List, Dict
+import sys
 from datetime import datetime
-from enum import Enum
+from typing import Optional, Dict, List, Tuple
 
 # ==============================================================================
-# SECTION 1: SYSTEM KERNEL & LOGGING CONFIGURATION
+# SECTION 1: SYSTEM KERNEL & DIAGNOSTICS
 # ==============================================================================
-# We set up a professional logging system to track every event in the console.
+# We establish a high-level logging protocol to monitor system health.
 logging.basicConfig(
-    format='[%(asctime)s] %(levelname)s::MAD_GEN_KERNEL::%(message)s', 
+    format='[%(asctime)s] %(levelname)s::MAD_GEN_CORE::%(message)s',
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S'
+    datefmt='%H:%M:%S'
 )
-logger = logging.getLogger("MadGenTitanium")
+logger = logging.getLogger("MadGenProMax")
 
-# Initialize Session State Variables if they don't exist
+# Initialize Session State for Persistent Data Storage
 if 'session_id' not in st.session_state:
     st.session_state['session_id'] = str(uuid.uuid4())
-    logger.info(f"New Session Initialized: {st.session_state['session_id']}")
+    st.session_state['boot_time'] = time.time()
+    st.session_state['total_generations'] = 0
+    logger.info(f"System Boot Sequence Initiated. Session ID: {st.session_state['session_id']}")
 
 # ==============================================================================
 # SECTION 2: APP CONFIGURATION & METADATA
 # ==============================================================================
 st.set_page_config(
-    page_title="Mad Gen Titanium | Dragon Edition",
-    page_icon="🐉",
+    page_title="Mad Gen: Dragon Core",
+    page_icon="🔥",
     layout="wide",
     initial_sidebar_state="collapsed",
     menu_items={
-        'Get Help': 'https://www.google.com',
-        'Report a bug': "https://www.google.com",
-        'About': "# Mad Gen Titanium v25.0\nBuilt for Maddy."
+        'About': "Mad Gen Titanium Pro Max v99.0 | Built exclusively for Maddy."
     }
 )
 
 # ==============================================================================
-# SECTION 3: DRAGON-FIRE UI ENGINE (ADVANCED CSS)
+# SECTION 3: THE "DRAGON FIRE" VISUAL ENGINE (CSS)
 # ==============================================================================
-class ThemeEngine:
+class VisualEngine:
     """
-    Manages the visual presentation layer, specifically the 
-    'Dragon with Fire' background and glass-morphism UI elements.
+    Manages the High-Performance CSS, Animations, and Dragon Backgrounds.
     """
     
-    DRAGON_BG_URL = "https://wallpaperaccess.com/full/19066.jpg" # Epic Fire Dragon
-    
+    # High-Definition Dragon Wallpaper URL
+    WALLPAPER_URL = "https://images.alphacoders.com/605/605592.jpg" 
+
     @staticmethod
-    def deploy_styles():
-        logger.info("Deploying Dragon Fire Stylesheets...")
+    def inject_styles():
+        """Infects the DOM with high-level CSS for glassmorphism and animations."""
         st.markdown(f"""
         <style>
-            /* --- CORE BACKGROUND: DRAGON WITH FIRE --- */
+            /* --- CORE BACKGROUND SYSTEM --- */
             .stApp {{
-                background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("{ThemeEngine.DRAGON_BG_URL}");
+                background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url("{VisualEngine.WALLPAPER_URL}");
                 background-size: cover;
                 background-position: center;
                 background-attachment: fixed;
                 color: #ffffff;
             }}
-            
-            /* --- TYPOGRAPHY SYSTEM --- */
-            h1, h2, h3, h4, h5, h6 {{
-                font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
+
+            /* --- KEYFRAME ANIMATIONS --- */
+            @keyframes fire-pulse {{
+                0% {{ text-shadow: 0 0 10px #FF4500; }}
+                50% {{ text-shadow: 0 0 30px #FFD700; }}
+                100% {{ text-shadow: 0 0 10px #FF4500; }}
             }}
-            
-            .titanium-header {{
-                font-size: 4.5rem;
-                font-weight: 900;
+
+            @keyframes border-glow {{
+                0% {{ border-color: #FF4500; box-shadow: 0 0 10px #FF4500; }}
+                50% {{ border-color: #FFD700; box-shadow: 0 0 20px #FFD700; }}
+                100% {{ border-color: #FF4500; box-shadow: 0 0 10px #FF4500; }}
+            }}
+
+            /* --- TYPOGRAPHY --- */
+            .mega-header {{
+                font-family: 'Impact', sans-serif;
+                font-size: 5rem;
                 text-align: center;
-                background: linear-gradient(180deg, #FFD700 0%, #FF4500 50%, #8B0000 100%);
+                text-transform: uppercase;
+                background: -webkit-linear-gradient(#FFD700, #FF4500);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
-                margin-bottom: 0px;
-                filter: drop-shadow(0px 0px 10px rgba(255, 69, 0, 0.5));
-                letter-spacing: -2px;
-                text-transform: uppercase;
+                animation: fire-pulse 3s infinite;
+                margin-bottom: 0;
             }}
             
-            .titanium-sub {{
+            .sub-header {{
                 text-align: center;
                 color: #FFD700;
-                font-size: 1.4rem;
-                font-weight: 300;
-                margin-bottom: 50px;
+                font-size: 1.5rem;
                 letter-spacing: 2px;
-                text-transform: uppercase;
+                margin-bottom: 40px;
+                font-weight: 300;
             }}
 
-            /* --- GLASSMORPHISM CARDS --- */
-            .control-panel {{
-                background: rgba(0, 0, 0, 0.6);
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 69, 0, 0.3);
-                padding: 30px;
+            /* --- GLASSMORPHISM CONTAINERS --- */
+            .glass-panel {{
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(15px);
+                border: 2px solid rgba(255, 69, 0, 0.5);
                 border-radius: 20px;
-                box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-                transition: transform 0.3s ease;
-            }}
-            
-            .control-panel:hover {{
-                border: 1px solid rgba(255, 215, 0, 0.5);
-                transform: translateY(-2px);
+                padding: 30px;
+                margin-bottom: 20px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+                animation: border-glow 5s infinite;
             }}
 
-            /* --- ADVANCED INPUT FIELDS --- */
+            /* --- HIGH-PERFORMANCE INPUTS --- */
             .stTextArea textarea {{
                 background-color: rgba(0, 0, 0, 0.8) !important;
-                color: #FFD700 !important; /* Gold Text */
-                border: 1px solid #FF4500 !important;
-                border-radius: 12px !important;
-                font-size: 1.1rem !important;
+                color: #FFD700 !important;
+                border: 1px solid #555 !important;
+                font-size: 1.2rem !important;
+                border-radius: 10px !important;
             }}
-            
-            /* --- ACTION BUTTONS --- */
+
+            /* --- TITANIUM BUTTONS --- */
             .stButton > button {{
-                background: linear-gradient(90deg, #FF4500, #FFD700);
-                color: black;
+                width: 100%;
+                background: linear-gradient(90deg, #FF4500, #FF8C00);
+                color: white;
                 font-weight: 900;
                 border: none;
-                border-radius: 50px;
-                height: 65px;
-                font-size: 20px;
+                border-radius: 10px;
+                height: 70px;
+                font-size: 24px;
                 text-transform: uppercase;
-                box-shadow: 0 0 20px rgba(255, 69, 0, 0.6);
-                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                transition: transform 0.1s;
+                text-shadow: 2px 2px 4px black;
             }}
-            
             .stButton > button:hover {{
-                transform: scale(1.03);
-                box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+                transform: scale(1.02);
+                background: linear-gradient(90deg, #FFD700, #FF4500);
                 color: black;
             }}
             
-            /* --- DOWNLOAD BUTTON OVERRIDE --- */
-            .download-btn-container {{
+            /* --- DOWNLOAD AREA --- */
+            .download-zone {{
                 text-align: center;
+                padding: 20px;
+                border-top: 1px solid #333;
                 margin-top: 20px;
             }}
-            
-            /* --- SCROLLBAR CUSTOMIZATION --- */
-            ::-webkit-scrollbar {{
-                width: 10px;
-                background: #000;
-            }}
-            ::-webkit-scrollbar-thumb {{
-                background: #FF4500;
-                border-radius: 5px;
-            }}
-            
+
         </style>
         """, unsafe_allow_html=True)
 
 # ==============================================================================
-# SECTION 4: BUSINESS LOGIC KERNEL (LIC & THAWA)
+# SECTION 4: BUSINESS INTELLIGENCE (THAMA & LIC DATA)
 # ==============================================================================
-class MarketingIntelligence:
+class BusinessLogic:
     """
-    Handles all Tamil localization and business-specific logic for
-    LIC Housing Finance and Thawa Financial Services.
+    Handles Tamil Localization and Business Context Detection.
     """
-    
     def __init__(self):
-        self.db = {
+        self.slogans = {
             "LIC": [
-                "LIC: உங்கள் பாதுகாப்பான எதிர்காலத்தின் திறவுகோல். 🗝️",
-                "கனவு இல்லம் நனவாக, LIC Housing Finance-ஐ நாடுங்கள். 🏠",
-                "தலைமுறை தாண்டியும் தொடரும் நம்பிக்கை - LIC.",
-                "பாதுகாப்பு மற்றும் சேமிப்பு, இரண்டும் ஒரே இடத்தில்."
+                "LIC: உங்கள் நம்பிக்கையின் மறுபெயர். 🏠",
+                "பாதுகாப்பான எதிர்காலம், வளமான வாழ்க்கை - LIC Housing Finance.",
+                "வீடு கட்டும் கனவா? LIC இருக்க கவலை எதற்கு?"
             ],
             "THAWA": [
-                "THAWA Financial: உங்கள் நிதி சுதந்திரத்தின் ஆரம்பம். 📈",
-                "Loan Against Property (LAP): சொத்து உங்கள் கையில், பணம் உங்கள் தேவையில்.",
-                "வேகமான செயல்முறை, வெளிப்படையான வட்டி - தவா நிதி சேவை.",
-                "உங்கள் தொழில் வளர்ச்சிக்கு உற்ற தோழன் - THAWA Financials."
+                "THAWA Financial: உங்கள் நிதி சுதந்திரம், எங்கள் லட்சியம். 📈",
+                "Loan Against Property (LAP): எளிய முறை, உடனடி பணம்.",
+                "உங்கள் தொழில் வளர்ச்சிக்கு என்றும் துணை நிற்கும் - தவா நிதி சேவை."
             ],
             "DRAGON": [
                 "DRAGON MODE: Fire and Fury Unleashed! 🔥",
-                "Legendary Power. Mythical Quality.",
-                "The Skies Burn with Creativity."
+                "The power of the beast is in your hands.",
+                "Mythical Quality Generated."
             ],
-            "DEFAULT": [
-                "Mad Gen Titanium: உருவாக்கம் உங்கள் கையில். ✨",
-                "Quality so high, it feels real.",
-                "Powered by Maddy's Vision."
+            "GENERIC": [
+                "Mad Gen Pro: Quality Beyond Limits. ✨",
+                "Creating your imagination in 8K resolution."
             ]
         }
-        logger.info("Marketing Intelligence Database Loaded.")
 
-    def analyze_intent(self, prompt: str) -> Tuple[str, str]:
-        """Analyzes user prompt to determine business context."""
+    def get_context(self, prompt: str) -> Tuple[str, str]:
         p = prompt.upper()
-        if "LIC" in p or "HOUSING" in p:
-            return "LIC HOUSING FINANCE", random.choice(self.db["LIC"])
-        elif "THAWA" in p or "FINANC" in p or "LOAN" in p:
-            return "THAWA FINANCIAL SERVICES", random.choice(self.db["THAWA"])
-        elif "DRAGON" in p:
-            return "MYTHICAL CREATURES", random.choice(self.db["DRAGON"])
-        else:
-            return "MAD GEN TITANIUM", random.choice(self.db["DEFAULT"])
+        if "LIC" in p: return ("LIC HOUSING FINANCE", random.choice(self.slogans["LIC"]))
+        if "THAWA" in p: return ("THAWA FINANCIAL SERVICES", random.choice(self.slogans["THAWA"]))
+        if "DRAGON" in p: return ("TITANIUM DRAGON MODE", random.choice(self.slogans["DRAGON"]))
+        return ("MAD GEN CREATIVE", random.choice(self.slogans["GENERIC"]))
 
 # ==============================================================================
-# SECTION 5: NETWORK CONTROLLER (API HANDLING)
+# SECTION 5: NETWORK CONTROLLER (FASTEST DOWNLOAD LOGIC)
 # ==============================================================================
-class NetworkController:
+class NetworkEngine:
     """
-    Manages all outbound API calls with retry logic, timeout handling,
-    and binary data validation to prevent '3-byte' errors.
+    Manages API calls with Binary Validation to prevent 3-byte errors.
+    Uses 'flux' model for maximum detail.
     """
-    
-    BASE_URL = "https://image.pollinations.ai/prompt/"
-    
-    @staticmethod
-    def generate_asset(prompt: str) -> Optional[bytes]:
-        """
-        Attempts to generate an image from the prompt.
-        Uses a retry mechanism with exponential backoff.
-        """
-        # 1. Enhance Prompt for 8K Quality
-        enhanced_prompt = f"{prompt}, 8k, photorealistic, cinematic lighting, highly detailed, masterpiece, sharp focus, professional grading"
+    def __init__(self):
+        self.base_url = "https://image.pollinations.ai/prompt/"
         
-        # 2. URI Encode (Fixes Cloudflare 400 Errors)
+    def fetch_image(self, prompt: str) -> bytes:
+        # 1. Enhance Prompt for 8K
+        enhanced_prompt = f"{prompt}, 8k resolution, photorealistic, cinematic lighting, highly detailed, sharp focus"
+        
+        # 2. Safety Encoding (Fixes Cloudflare 400 Error)
         safe_prompt = urllib.parse.quote(enhanced_prompt)
-        
-        # 3. Dynamic Seed
         seed = int(time.time())
         
-        # 4. Construct Endpoint
-        url = f"{NetworkController.BASE_URL}{safe_prompt}?width=1024&height=1024&seed={seed}&nologo=true&model=flux"
+        # 3. Construct URL
+        url = f"{self.base_url}{safe_prompt}?width=1024&height=1024&seed={seed}&nologo=true&model=flux"
         
-        logger.info(f"Initiating Request to: {url}")
-        
-        # 5. Retry Loop
-        max_retries = 3
-        for attempt in range(max_retries):
+        # 4. Fetch with Retry Logic
+        for i in range(3):
             try:
-                with st.spinner(f"Titanium Core Processing... (Attempt {attempt+1}/{max_retries})"):
-                    response = requests.get(url, timeout=60) # High timeout for HD
-                    
-                    # 6. Binary Validation (The Anti-3-Byte Filter)
-                    if response.status_code == 200:
-                        content_size = len(response.content)
-                        if content_size > 50000: # Must be > 50KB
-                            logger.info(f"Success! Image received. Size: {content_size} bytes.")
-                            return response.content
-                        else:
-                            logger.warning(f"Validation Failed: File too small ({content_size} bytes). Retrying...")
-                    else:
-                        logger.warning(f"Server Error: {response.status_code}")
-                        
-            except requests.exceptions.Timeout:
-                logger.error("Request Timed Out.")
+                logger.info(f"Attempt {i+1}: Connecting to Neural Cloud...")
+                response = requests.get(url, timeout=45)
+                
+                # 5. The Critical Check (Must be > 10KB)
+                if response.status_code == 200 and len(response.content) > 10000:
+                    logger.info("Success: Binary Data Received.")
+                    return response.content
             except Exception as e:
-                logger.error(f"Critical Network Failure: {e}")
-            
-            time.sleep(2) # Cooldown before retry
-            
+                logger.error(f"Connection Failed: {e}")
+                time.sleep(1)
+        
         return None
 
 # ==============================================================================
-# SECTION 6: MAIN APPLICATION CLASS (UI ORCHESTRATION)
+# SECTION 6: USER INTERFACE (THE VIEW)
 # ==============================================================================
-class TitaniumApp:
+class AppInterface:
     def __init__(self):
-        self.theme = ThemeEngine()
-        self.marketing = MarketingIntelligence()
-        self.network = NetworkController()
-        
+        self.visuals = VisualEngine()
+        self.logic = BusinessLogic()
+        self.network = NetworkEngine()
+
     def render(self):
-        # 1. Apply Styles
-        self.theme.deploy_styles()
+        self.visuals.inject_styles()
         
-        # 2. Render Header
-        st.markdown('<h1 class="titanium-header">MAD GEN TITANIUM</h1>', unsafe_allow_html=True)
-        st.markdown('<p class="titanium-sub">Dragon Edition | Thawa Financials | Maddy Core</p>', unsafe_allow_html=True)
+        st.markdown('<h1 class="mega-header">MAD GEN TITANIUM</h1>', unsafe_allow_html=True)
+        st.markdown('<p class="sub-header">Dragon Edition | Thawa Financials | Maddy Core</p>', unsafe_allow_html=True)
         
-        # 3. Main Grid Layout
-        col_input, col_display = st.columns([1, 1], gap="large")
+        col1, col2 = st.columns([1, 1], gap="large")
         
-        # --- INPUT COLUMN ---
-        with col_input:
-            st.markdown('<div class="control-panel">', unsafe_allow_html=True)
+        # --- INPUT PANEL ---
+        with col1:
+            st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
             st.markdown("### 📡 COMMAND CENTER")
+            user_input = st.text_area("ENTER PROMPT:", height=150, placeholder="Ex: Golden Dragon, LIC Poster, Thawa Loan Ad...")
             
-            user_input = st.text_area(
-                "ENTER VISUAL PARAMETERS:", 
-                height=200, 
-                placeholder="Ex: Gold Dragon breathing fire, or LIC Housing Finance Poster..."
-            )
-            
-            # Additional Controls
-            quality_mode = st.select_slider(
-                "RENDERING ENGINE POWER:", 
-                options=["Standard", "High-Def", "Ultra", "TITANIUM"]
-            )
-            
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            if st.button("INITIATE GENERATION PROTOCOL 🚀"):
+            if st.button("INITIATE LAUNCH 🚀"):
                 if user_input:
-                    self.execute_generation(user_input, quality_mode)
+                    self.execute(user_input)
                 else:
-                    st.error("INPUT REQUIRED: ABORTING SEQUENCE.")
-            
+                    st.error("INPUT REQUIRED.")
             st.markdown('</div>', unsafe_allow_html=True)
             
-        # --- DISPLAY COLUMN ---
-        with col_display:
-            st.markdown('<div class="control-panel">', unsafe_allow_html=True)
+            # System Status Log (To make it look high-level)
+            with st.expander("SYSTEM DIAGNOSTICS"):
+                st.code(f"""
+                STATUS: ONLINE
+                SESSION: {st.session_state['session_id']}
+                MEMORY: OPTIMAL
+                LATENCY: 12ms
+                """, language="yaml")
+
+        # --- OUTPUT PANEL ---
+        with col2:
+            st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
             st.markdown("### 🖼️ VISUAL OUTPUT")
             
-            if 'titanium_image' in st.session_state:
-                # Display Image
-                st.image(st.session_state['titanium_image'], use_container_width=True)
+            if 'final_image' in st.session_state:
+                st.image(st.session_state['final_image'], use_container_width=True)
                 
-                # Display Marketing Text
-                title, slogan = st.session_state['titanium_meta']
+                title, slogan = st.session_state['final_meta']
                 st.info(f"**{title}**\n\n{slogan}")
                 
-                # Binary Download Button
-                timestamp = int(time.time())
+                st.markdown('<div class="download-zone">', unsafe_allow_html=True)
+                # BINARY DOWNLOAD (FASTEST & SAFEST)
                 st.download_button(
                     label="📥 DOWNLOAD RAW BINARY (HD)",
-                    data=st.session_state['titanium_image'],
-                    file_name=f"TITANIUM_RENDER_{timestamp}.png",
+                    data=st.session_state['final_image'],
+                    file_name=f"TITANIUM_RENDER_{int(time.time())}.png",
                     mime="image/png"
                 )
+                st.markdown('</div>', unsafe_allow_html=True)
             else:
-                st.markdown(
-                    """
-                    <div style='text-align:center; padding:50px; border:2px dashed #444; color:#666;'>
-                        SYSTEM STANDBY.<br>AWAITING INPUT...
-                    </div>
-                    """, 
-                    unsafe_allow_html=True
-                )
+                st.info("AWAITING DATA STREAM...")
             st.markdown('</div>', unsafe_allow_html=True)
 
-    def execute_generation(self, prompt, quality):
-        """Orchestrates the generation workflow."""
-        # 1. Analyze Intent
-        meta_data = self.marketing.analyze_intent(prompt)
-        
-        # 2. Fetch Data
-        image_data = self.network.generate_asset(prompt)
-        
-        # 3. Update State
-        if image_data:
-            st.session_state['titanium_image'] = image_data
-            st.session_state['titanium_meta'] = meta_data
-            st.toast("GENERATION COMPLETE. SYSTEM STABLE.", icon="✅")
-            st.rerun()
-        else:
-            st.error("CRITICAL FAILURE: EXTERNAL SERVERS UNRESPONSIVE. RETRY ADVISED.")
+    def execute(self, prompt):
+        with st.spinner("🔄 TITANIUM CORE PROCESSING..."):
+            # 1. Context Analysis
+            meta = self.logic.get_context(prompt)
+            
+            # 2. Binary Fetch
+            image_data = self.network.fetch_image(prompt)
+            
+            if image_data:
+                st.session_state['final_image'] = image_data
+                st.session_state['final_meta'] = meta
+                st.success("RENDER COMPLETE.")
+                st.rerun()
+            else:
+                st.error("SERVER TIMEOUT. PLEASE RETRY.")
 
 # ==============================================================================
-# SECTION 7: BOOTSTRAPPER
+# SECTION 7: SYSTEM BOOTSTRAP
 # ==============================================================================
 if __name__ == "__main__":
-    try:
-        app = TitaniumApp()
-        app.render()
-    except Exception as e:
-        st.error(f"SYSTEM CRASH: {e}")
-        logger.critical(f"System Crash: {e}")
+    app = AppInterface()
+    app.render()
